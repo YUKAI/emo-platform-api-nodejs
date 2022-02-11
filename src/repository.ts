@@ -16,6 +16,23 @@ const repository: Repository = {
   getAccessToken: async () => await axiosClient.post('/oauth/token/refresh', { refreshToken: process.env.REFRESH_TOKEN }).then(({ data }) => data),
 }
 
+axiosClient.interceptors.response.use((response) => {
+  return response
+}, async (error) => {
+  const originalRequest = error.config
+
+  if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
+    originalRequest._retry = true
+    const { accessToken } = await repository.getAccessToken()
+    const headers: any = axiosClient.defaults.headers
+    headers.authorization = `Bearer ${accessToken}`
+    originalRequest.headers = headers
+    return await axiosClient(originalRequest)
+  }
+
+  return await Promise.reject(error)
+})
+
 export {
   repository
 }
