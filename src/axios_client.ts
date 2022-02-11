@@ -14,7 +14,7 @@ const axiosConfig = {
 
 const axiosClient = axios.create(axiosConfig)
 applyConverters(axiosClient)
-axiosClient.defaults.baseURL = `${endpoint}/v1`
+axiosClient.defaults.baseURL = `${endpoint}`
 
 export {
   axiosClient,

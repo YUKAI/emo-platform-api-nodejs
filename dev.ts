@@ -11,3 +11,12 @@ EmoApiClient.getAccountInfo()
     console.error(`ステータスコード: ${error?.response?.status}`)
     console.error(error?.response?.data)
   })
+
+EmoApiClient.getAccessToken()
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
