@@ -8,5 +8,5 @@ interface EmoAccountInfo {
 }
 
 export {
-  EmoAccountInfo
+  EmoAccountInfo,
 }

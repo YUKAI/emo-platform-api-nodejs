@@ -4,6 +4,7 @@ import type {
 } from './types'
 
 interface AccountRepository {
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
   getAccountInfo: () => Promise<EmoAccountInfo>
 }
 
