@@ -12,6 +12,16 @@ EmoApiClient.getAccountInfo()
     console.error(error?.response?.data)
   })
 
+console.log('GET /v1/rooms')
+EmoApiClient.getRoomsList({offset: 0})
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
+
 EmoApiClient.getAccessToken()
   .then(response => {
     console.log(response)
