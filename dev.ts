@@ -1,9 +1,9 @@
 import type {AxiosError} from 'axios'
-import {AccountRepository} from './dist/index'
+import {EmoApiClient} from './dist/index'
 console.log('emo API Client dev client')
 
 console.log('GET /v1/me')
-AccountRepository.getAccountInfo()
+EmoApiClient.getAccountInfo()
   .then(response => {
     console.log(response)
   })

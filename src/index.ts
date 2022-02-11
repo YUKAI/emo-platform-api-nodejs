@@ -1,1 +1,1 @@
-export { repo as AccountRepository } from './account_repository'
+export { repository as EmoApiClient } from './repository'

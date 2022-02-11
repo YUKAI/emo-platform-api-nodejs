@@ -3,15 +3,15 @@ import type {
   EmoAccountInfo
 } from './types'
 
-interface AccountRepository {
+interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
   getAccountInfo: () => Promise<EmoAccountInfo>
 }
 
-const repo: AccountRepository = {
+const repository: Repository = {
   getAccountInfo: async () => await axiosClient.get('/me').then(({ data }) => data)
 }
 
 export {
-  repo
+  repository
 }
