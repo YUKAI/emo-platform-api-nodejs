@@ -1,1 +1,1 @@
-export {getAccountInfo} from './get_me'
+export { repo as AccountRepository } from './account_repository'
