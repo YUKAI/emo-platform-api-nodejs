@@ -2,6 +2,15 @@ import type {AxiosError} from 'axios'
 import {EmoApiClient} from './dist/index'
 console.log('emo API Client dev client')
 
+EmoApiClient.getAccessToken()
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
+
 console.log('GET /v1/me')
 EmoApiClient.getAccountInfo()
   .then(response => {
@@ -54,7 +63,8 @@ EmoApiClient.getRoomsId()
     console.error(error?.response?.data)
   })
 
-EmoApiClient.getAccessToken()
+console.log('GET /v1/webhook')
+EmoApiClient.getWebhookSetting()
   .then(response => {
     console.log(response)
   })

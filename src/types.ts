@@ -60,10 +60,19 @@ interface EmoMotionsInfo {
   motions: EmoMotion[]
 }
 
+interface EmoWebhookInfo {
+  description: string
+  events: string[]
+  status: string
+  secret: string
+  url: string
+}
+
 export {
   EmoTokens,
   EmoAccountInfo,
   EmoRoomInfo,
   EmoStampsInfo,
   EmoMotionsInfo,
+  EmoWebhookInfo,
 }

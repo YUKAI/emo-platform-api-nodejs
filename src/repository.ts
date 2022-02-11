@@ -5,6 +5,7 @@ import type {
   EmoTokens,
   EmoStampsInfo,
   EmoMotionsInfo,
+  EmoWebhookInfo,
 } from './types'
 
 interface Repository {
@@ -20,6 +21,8 @@ interface Repository {
   getStampsList: (params?: {offset: number}) => Promise<EmoStampsInfo>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
   getMotionsList: (params?: {offset: number}) => Promise<EmoMotionsInfo>
+  // https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
+  getWebhookSetting: () => Promise<EmoWebhookInfo>
 }
 
 const repository: Repository = {
@@ -32,6 +35,7 @@ const repository: Repository = {
   },
   getStampsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/stamps', { params }).then(({ data }) => data),
   getMotionsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/motions', { params }).then(({ data }) => data),
+  getWebhookSetting: async () => await axiosClient.get('/v1/webhook').then(({ data }) => data),
 }
 
 axiosClient.interceptors.response.use((response) => {
