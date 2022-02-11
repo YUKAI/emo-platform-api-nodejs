@@ -37,8 +37,33 @@ interface EmoRoomInfo {
   rooms: EmoRoom[]
 }
 
+interface EmoStamp {
+  uuid: string
+  name: string
+  summary: string
+  image: string
+}
+
+interface EmoStampsInfo {
+  listing: Listing
+  stamps: EmoStamp[]
+}
+
+interface EmoMotion {
+  uuid: string
+  name: string
+  preview: string
+}
+
+interface EmoMotionsInfo {
+  listing: Listing
+  motions: EmoMotion[]
+}
+
 export {
   EmoTokens,
   EmoAccountInfo,
   EmoRoomInfo,
+  EmoStampsInfo,
+  EmoMotionsInfo,
 }

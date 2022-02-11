@@ -2,7 +2,9 @@ import { axiosClient } from './axios_client'
 import type {
   EmoAccountInfo,
   EmoRoomInfo,
-  EmoTokens
+  EmoTokens,
+  EmoStampsInfo,
+  EmoMotionsInfo,
 } from './types'
 
 interface Repository {
@@ -11,13 +13,25 @@ interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
   getAccountInfo: () => Promise<EmoAccountInfo>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
-  getRoomsList: (params: {offset?: number}) => Promise<EmoRoomInfo>
+  getRoomsList: (params?: {offset: number}) => Promise<EmoRoomInfo>
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
+  getRoomsId: () => Promise<string[]>
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
+  getStampsList: (params?: {offset: number}) => Promise<EmoStampsInfo>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
+  getMotionsList: (params?: {offset: number}) => Promise<EmoMotionsInfo>
 }
 
 const repository: Repository = {
   getAccessToken: async () => await axiosClient.post('/oauth/token/refresh', { refreshToken: process.env.REFRESH_TOKEN }).then(({ data }) => data),
   getAccountInfo: async () => await axiosClient.get('/v1/me').then(({ data }) => data),
-  getRoomsList: async ({ offset }) => await axiosClient.get('/v1/rooms', { params: { offset } }).then(({ data }) => data),
+  getRoomsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/rooms', { params }).then(({ data }) => data),
+  getRoomsId: async () => {
+    const { rooms } = await axiosClient.get<EmoRoomInfo>('/v1/rooms').then(({ data }) => data)
+    return rooms.map(room => room.uuid)
+  },
+  getStampsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/stamps', { params }).then(({ data }) => data),
+  getMotionsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/motions', { params }).then(({ data }) => data),
 }
 
 axiosClient.interceptors.response.use((response) => {
