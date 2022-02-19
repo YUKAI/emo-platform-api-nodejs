@@ -19,8 +19,7 @@ interface EmoApiClientParams {
 }
 
 class EmoApiClient implements Repository {
-  private readonly axiosInstance: AxiosInstance
-  // public accessToken: string
+  public axiosInstance: AxiosInstance
   public refreshToken: string
 
   constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
