@@ -99,6 +99,31 @@ interface EmoSensor {
   battery: number
 }
 
+interface EmoRoomSensorInfo {
+  sensorType: string
+  uuid: string
+  nickname: string
+  events: EmoRoomSensorEvent[]
+}
+
+interface EmoRoomSensorEvent {
+  temperature: number
+  humidity: number
+  illuminance: number
+}
+
+interface EmoSettingsInfo {
+  nickname: string
+  wakeword: string
+  volume: number
+  voicePitch: number
+  voiceSpeed: number
+  lang: string
+  serialNumber: string
+  timezone: string
+  zipCode: string
+}
+
 export {
   EmoTokens,
   EmoAccountInfo,
@@ -108,4 +133,6 @@ export {
   EmoWebhookInfo,
   EmoMessagesInfo,
   EmoSensorsInfo,
+  EmoRoomSensorInfo,
+  EmoSettingsInfo,
 }
