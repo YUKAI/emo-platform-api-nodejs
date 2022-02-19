@@ -7,15 +7,21 @@ const axiosConfig = {
   headers: {
     accept: 'application/json',
     'content-type': 'application/json',
-    authorization: `Bearer ${process.env.ACCESS_TOKEN}`
   },
   paramsSerializer: (params: any) => stringify(params, { arrayFormat: 'brackets' })
 }
 
-const axiosClient = axios.create(axiosConfig)
-applyConverters(axiosClient)
-axiosClient.defaults.baseURL = `${endpoint}`
+interface AxiosInstanceParmas {
+  baseURL?: string
+}
+
+const getAxiosInstance = ({ baseURL }: AxiosInstanceParmas) => {
+  const axiosClient = axios.create(axiosConfig)
+  applyConverters(axiosClient)
+  axiosClient.defaults.baseURL = baseURL ?? `${endpoint}`
+  return axiosClient
+}
 
 export {
-  axiosClient,
+  getAxiosInstance,
 }

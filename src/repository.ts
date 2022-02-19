@@ -1,38 +1,62 @@
-import { axiosClient } from './axios_client'
+import type { AxiosInstance } from 'axios'
+import { getAxiosInstance } from './axios_client'
 import type {
   EmoAccountInfo,
-  EmoTokens
+  EmoTokens,
 } from './types'
 
 interface Repository {
-  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
-  getAccountInfo: () => Promise<EmoAccountInfo>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
   getAccessToken: () => Promise<EmoTokens>
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
+  getAccountInfo: () => Promise<EmoAccountInfo>
 }
 
-const repository: Repository = {
-  getAccountInfo: async () => await axiosClient.get('/v1/me').then(({ data }) => data),
-  getAccessToken: async () => await axiosClient.post('/oauth/token/refresh', { refreshToken: process.env.REFRESH_TOKEN }).then(({ data }) => data),
+interface EmoApiClientParams {
+  accessToken: string
+  refreshToken: string
+  baseURL?: string
 }
 
-axiosClient.interceptors.response.use((response) => {
-  return response
-}, async (error) => {
-  const originalRequest = error.config
+class EmoApiClient implements Repository {
+  private readonly axiosInstance: AxiosInstance
+  // public accessToken: string
+  public refreshToken: string
 
-  if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
-    originalRequest._retry = true
-    const { accessToken } = await repository.getAccessToken()
-    const headers: any = axiosClient.defaults.headers
+  constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
+    this.refreshToken = refreshToken
+    this.axiosInstance = getAxiosInstance({ baseURL })
+
+    const headers: any = this.axiosInstance.defaults.headers
     headers.authorization = `Bearer ${accessToken}`
-    originalRequest.headers = headers
-    return await axiosClient(originalRequest)
+
+    this.axiosInstance.interceptors.response.use((response) => {
+      return response
+    }, async (error) => {
+      const originalRequest = error.config
+
+      if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
+        originalRequest._retry = true
+        const { accessToken } = await this.getAccessToken()
+        const headers: any = this.axiosInstance.defaults.headers
+        headers.authorization = `Bearer ${String(accessToken)}`
+        originalRequest.headers = headers
+        return await this.axiosInstance(originalRequest)
+      }
+
+      return await Promise.reject(error)
+    })
   }
 
-  return await Promise.reject(error)
-})
+  async getAccountInfo () {
+    return await this.axiosInstance.get('/v1/me').then(({ data }) => data)
+  }
+
+  async getAccessToken () {
+    return await this.axiosInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
+  }
+}
 
 export {
-  repository
+  EmoApiClient,
 }
