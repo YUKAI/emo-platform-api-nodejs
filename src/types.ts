@@ -68,6 +68,25 @@ interface EmoWebhookInfo {
   url: string
 }
 
+interface EmoMessagesInfo {
+  messages: EmoMessageInfo[]
+}
+
+interface EmoMessageInfo {
+  sequence: number
+  uniqueId: string
+  user: EmoRoomMember
+  message: EmoMessage
+  media: string
+  audioUrl: string
+  imageUrl: string
+  lang: string
+}
+
+interface EmoMessage{
+  ja: string
+}
+
 export {
   EmoTokens,
   EmoAccountInfo,
@@ -75,4 +94,5 @@ export {
   EmoStampsInfo,
   EmoMotionsInfo,
   EmoWebhookInfo,
+  EmoMessagesInfo,
 }
