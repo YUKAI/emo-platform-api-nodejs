@@ -2,7 +2,13 @@ import type {AxiosError} from 'axios'
 import {EmoApiClient} from './dist/index'
 console.log('emo API Client dev client')
 
-EmoApiClient.getAccessToken()
+const apiClient = new EmoApiClient({
+  accessToken: process.env.ACCESS_TOKEN,
+  refreshToken: process.env.REFRESH_TOKEN,
+})
+
+console.log('POST /oauth/token/refresh')
+apiClient.getAccessToken()
   .then(response => {
     console.log(response)
   })
@@ -12,7 +18,7 @@ EmoApiClient.getAccessToken()
   })
 
 console.log('GET /v1/me')
-EmoApiClient.getAccountInfo()
+apiClient.getAccountInfo()
   .then(response => {
     console.log(response)
   })
@@ -22,7 +28,7 @@ EmoApiClient.getAccountInfo()
   })
 
 console.log('GET /v1/rooms')
-EmoApiClient.getRoomsList({offset: 0})
+apiClient.getRoomsList({offset: 0})
   .then(response => {
     console.log(response)
   })
@@ -32,7 +38,7 @@ EmoApiClient.getRoomsList({offset: 0})
   })
 
 console.log('GET /v1/motions')
-EmoApiClient.getMotionsList()
+apiClient.getMotionsList()
   .then(response => {
     console.log(response)
   })
@@ -43,7 +49,7 @@ EmoApiClient.getMotionsList()
   })
 
 console.log('GET /v1/stamps')
-EmoApiClient.getStampsList()
+apiClient.getStampsList()
   .then(response => {
     console.log(response)
   })
@@ -54,7 +60,7 @@ EmoApiClient.getStampsList()
   })
 
 console.log('GET /v1/rooms')
-EmoApiClient.getRoomsId()
+apiClient.getRoomsId()
   .then(roomIds => {
     console.log(roomIds)
   })
@@ -64,7 +70,7 @@ EmoApiClient.getRoomsId()
   })
 
 console.log('GET /v1/webhook')
-EmoApiClient.getWebhookSetting()
+apiClient.getWebhookSetting()
   .then(response => {
     console.log(response)
   })

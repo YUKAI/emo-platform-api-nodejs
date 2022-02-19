@@ -1,4 +1,5 @@
-import { axiosClient } from './axios_client'
+import type { AxiosInstance } from 'axios'
+import { getAxiosInstance } from './axios_client'
 import type {
   EmoAccountInfo,
   EmoRoomInfo,
@@ -25,36 +26,71 @@ interface Repository {
   getWebhookSetting: () => Promise<EmoWebhookInfo>
 }
 
-const repository: Repository = {
-  getAccessToken: async () => await axiosClient.post('/oauth/token/refresh', { refreshToken: process.env.REFRESH_TOKEN }).then(({ data }) => data),
-  getAccountInfo: async () => await axiosClient.get('/v1/me').then(({ data }) => data),
-  getRoomsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/rooms', { params }).then(({ data }) => data),
-  getRoomsId: async () => {
-    const { rooms } = await axiosClient.get<EmoRoomInfo>('/v1/rooms').then(({ data }) => data)
-    return rooms.map(room => room.uuid)
-  },
-  getStampsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/stamps', { params }).then(({ data }) => data),
-  getMotionsList: async (params = { offset: 0 }) => await axiosClient.get('/v1/motions', { params }).then(({ data }) => data),
-  getWebhookSetting: async () => await axiosClient.get('/v1/webhook').then(({ data }) => data),
+interface EmoApiClientParams {
+  accessToken: string
+  refreshToken: string
+  baseURL?: string
 }
 
-axiosClient.interceptors.response.use((response) => {
-  return response
-}, async (error) => {
-  const originalRequest = error.config
+class EmoApiClient implements Repository {
+  public axiosInstance: AxiosInstance
+  public refreshToken: string
 
-  if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
-    originalRequest._retry = true
-    const { accessToken } = await repository.getAccessToken()
-    const headers: any = axiosClient.defaults.headers
+  constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
+    this.refreshToken = refreshToken
+    this.axiosInstance = getAxiosInstance({ baseURL })
+
+    const headers: any = this.axiosInstance.defaults.headers
     headers.authorization = `Bearer ${accessToken}`
-    originalRequest.headers = headers
-    return await axiosClient(originalRequest)
+
+    this.axiosInstance.interceptors.response.use((response) => {
+      return response
+    }, async (error) => {
+      const originalRequest = error.config
+
+      if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
+        originalRequest._retry = true
+        const { accessToken } = await this.getAccessToken()
+        const headers: any = this.axiosInstance.defaults.headers
+        headers.authorization = `Bearer ${String(accessToken)}`
+        originalRequest.headers = headers
+        return await this.axiosInstance(originalRequest)
+      }
+
+      return await Promise.reject(error)
+    })
   }
 
-  return await Promise.reject(error)
-})
+  async getAccountInfo () {
+    return await this.axiosInstance.get('/v1/me').then(({ data }) => data)
+  }
+
+  async getAccessToken () {
+    return await this.axiosInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
+  }
+
+  async getRoomsList (params = { offset: 0 }) {
+    return await this.axiosInstance.get('/v1/rooms', { params }).then(({ data }) => data)
+  }
+
+  async getRoomsId () {
+    const { rooms } = await this.axiosInstance.get<EmoRoomInfo>('/v1/rooms').then(({ data }) => data)
+    return rooms.map(room => room.uuid)
+  }
+
+  async getStampsList (params = { offset: 0 }) {
+    return await this.axiosInstance.get('/v1/stamps', { params }).then(({ data }) => data)
+  }
+
+  async getMotionsList (params = { offset: 0 }) {
+    return await this.axiosInstance.get('/v1/motions', { params }).then(({ data }) => data)
+  }
+
+  async getWebhookSetting () {
+    return await this.axiosInstance.get('/v1/webhook').then(({ data }) => data)
+  }
+}
 
 export {
-  repository
+  EmoApiClient,
 }
