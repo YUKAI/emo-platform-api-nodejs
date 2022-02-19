@@ -8,6 +8,7 @@ import type {
   EmoMotionsInfo,
   EmoWebhookInfo,
   EmoMessagesInfo,
+  EmoSensorsInfo,
 } from './types'
 
 interface Repository {
@@ -28,7 +29,9 @@ interface Repository {
 
   // APIs under a room
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
-  getMessages: (params?: {roomUuid: string, before?: number}) => Promise<EmoMessagesInfo>
+  getMessages: (params: {roomUuid: string, before?: number}) => Promise<EmoMessagesInfo>
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
+  getSensors: (params: {roomUuid: string}) => Promise<EmoSensorsInfo>
 }
 
 interface EmoApiClientParams {
@@ -99,6 +102,10 @@ class EmoApiClient implements Repository {
     const params = { before }
     Object.keys(params).forEach(key => params[key] === undefined && delete (params[key]))
     return await this.axiosInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
+  }
+
+  async getSensors ({ roomUuid }) {
+    return await this.axiosInstance.get(`/v1/rooms/${String(roomUuid)}/sensors`).then(({ data }) => data)
   }
 }
 

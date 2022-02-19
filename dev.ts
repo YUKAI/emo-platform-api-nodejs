@@ -89,3 +89,13 @@ apiClient.getMessages({roomUuid: '1d1ee13c-91c8-4d3f-889c-d88c73cb62dd'})
     console.error(`ステータスコード: ${error?.response?.status}`)
     console.error(error?.response?.data)
   })
+
+console.log('GET /v1/rooms/{roomUuid}/sensors')
+apiClient.getMessages({roomUuid: '1d1ee13c-91c8-4d3f-889c-d88c73cb62dd'})
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })

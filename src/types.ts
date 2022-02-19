@@ -87,6 +87,18 @@ interface EmoMessage{
   ja: string
 }
 
+interface EmoSensorsInfo {
+  sensors: EmoSensor[]
+}
+
+interface EmoSensor {
+  uuid: string
+  sensorType: string
+  nickname: string
+  signalStrength: number
+  battery: number
+}
+
 export {
   EmoTokens,
   EmoAccountInfo,
@@ -95,4 +107,5 @@ export {
   EmoMotionsInfo,
   EmoWebhookInfo,
   EmoMessagesInfo,
+  EmoSensorsInfo,
 }
