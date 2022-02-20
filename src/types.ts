@@ -129,7 +129,7 @@ interface PostTextMessageRequest {
 }
 
 interface PostStampMessageRequest {
-  stampUuid: string
+  uuid: string
   text?: string
 }
 
@@ -139,6 +139,21 @@ interface PostImageMessageRequest {
 
 interface PostAudioMessageRequest {
   audio: Blob
+}
+
+interface PostLedColorMotionRequest {
+  red: number
+  blue: number
+  green: number
+}
+
+interface PostMoveToMotionRequest {
+  angle: number
+  verticalAngle: number
+}
+
+interface PostPresetMotionRequest {
+  uuid: string
 }
 
 export {
@@ -157,4 +172,7 @@ export {
   PostStampMessageRequest,
   PostImageMessageRequest,
   PostAudioMessageRequest,
+  PostLedColorMotionRequest,
+  PostMoveToMotionRequest,
+  PostPresetMotionRequest,
 }

@@ -15,6 +15,10 @@ import type {
   MessageResponse,
   PostStampMessageRequest,
   PostImageMessageRequest,
+  PostMoveToMotionRequest,
+  PostLedColorMotionRequest,
+  PostAudioMessageRequest,
+  PostPresetMotionRequest,
 } from './types'
 
 interface Repository {
@@ -42,6 +46,12 @@ interface Repository {
   postImageMessage: (params: {roomUuid: string, params: PostImageMessageRequest}) => Promise<MessageResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
   postAudioMessage: (params: {roomUuid: string, params: PostAudioMessageRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
+  postLedColorMotion: (params: {roomUuid: string, params: PostLedColorMotionRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
+  postMoveToMotion: (params: {roomUuid: string, params: PostMoveToMotionRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
+  postPresetMotion: (params: {roomUuid: string, params: PostPresetMotionRequest}) => Promise<MessageResponse>
 
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
   getSensors: (params: {roomUuid: string}) => Promise<SensorsResponse>
@@ -130,6 +140,18 @@ class EmoApiClient implements Repository {
 
   async postAudioMessage ({ roomUuid, params }) {
     return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, { params, headers: { 'content-type': 'multipart/form-data' } }).then(({ data }) => data)
+  }
+
+  async postLedColorMotion ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, { params }).then(({ data }) => data)
+  }
+
+  async postMoveToMotion ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, { params }).then(({ data }) => data)
+  }
+
+  async postPresetMotion ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/motions/preset`, { params }).then(({ data }) => data)
   }
 
   async getSensors ({ roomUuid }) {
