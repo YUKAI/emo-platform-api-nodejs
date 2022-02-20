@@ -19,6 +19,9 @@ import type {
   PostLedColorMotionRequest,
   PostAudioMessageRequest,
   PostPresetMotionRequest,
+  PutWebhookRequest,
+  PutWebhookEventsRequest,
+  PostWebhookRequest,
 } from './types'
 
 interface Repository {
@@ -32,8 +35,16 @@ interface Repository {
   getStampsList: (params?: {offset: number}) => Promise<StampsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
   getMotionsList: (params?: {offset: number}) => Promise<MotionsResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
+  getWebhook: () => Promise<WebhookResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
+  postWebhook: (params: { params: PostWebhookRequest}) => Promise<WebhookResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
-  getWebhookSetting: () => Promise<WebhookResponse>
+  putWebhook: (params: { params: PutWebhookRequest}) => Promise<WebhookResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
+  deleteWebhook: () => Promise<WebhookResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
+  putWebhookEvents: (params: { params: PutWebhookEventsRequest}) => Promise<WebhookResponse>
 
   // APIs under a room
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
@@ -116,8 +127,24 @@ class EmoApiClient implements Repository {
     return await this.axiosInstance.get('/v1/motions', { params }).then(({ data }) => data)
   }
 
-  async getWebhookSetting () {
+  async getWebhook () {
     return await this.axiosInstance.get('/v1/webhook').then(({ data }) => data)
+  }
+
+  async postWebhook ({ params }) {
+    return await this.axiosInstance.post('/v1/webhook', { params }).then(({ data }) => data)
+  }
+
+  async putWebhook ({ params }) {
+    return await this.axiosInstance.put('/v1/webhook', { params }).then(({ data }) => data)
+  }
+
+  async deleteWebhook () {
+    return await this.axiosInstance.delete('/v1/webhook').then(({ data }) => data)
+  }
+
+  async putWebhookEvents ({ params }) {
+    return await this.axiosInstance.put('/v1/webhook/events', { params }).then(({ data }) => data)
   }
 
   async getMessages ({ roomUuid, before = undefined }) {
