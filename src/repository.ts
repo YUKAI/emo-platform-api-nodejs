@@ -6,9 +6,9 @@ import type {
   MessagesResponse,
   SensorResponse,
   EmoSettingsResponse,
-  EmoWebhookResponse,
-  EmoMotionsResponse,
-  EmoStampsResponse,
+  WebhookResponse,
+  MotionsResponse,
+  StampsResponse,
   RoomsResponse,
   AccountResponse,
   PostTextMessageRequest,
@@ -29,11 +29,11 @@ interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
   getRoomsList: (params?: {offset: number}) => Promise<RoomsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
-  getStampsList: (params?: {offset: number}) => Promise<EmoStampsResponse>
+  getStampsList: (params?: {offset: number}) => Promise<StampsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
-  getMotionsList: (params?: {offset: number}) => Promise<EmoMotionsResponse>
+  getMotionsList: (params?: {offset: number}) => Promise<MotionsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
-  getWebhookSetting: () => Promise<EmoWebhookResponse>
+  getWebhookSetting: () => Promise<WebhookResponse>
 
   // APIs under a room
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages

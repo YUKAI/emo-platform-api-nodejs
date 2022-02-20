@@ -18,49 +18,49 @@ interface AccountResponse {
   status: 'active' | 'suspended' | 'deleted'
 }
 
-interface EmoRoomMember {
+interface RoomMember {
   uuid: string
   userType: string // TODO: enum?
   nickname: string
   profileImage: string
 }
 
-interface EmoRoom {
+interface Room {
   uuid: string
   name: string
   roomType: string // TODO: enum?
-  room_members: EmoRoomMember[]
+  room_members: RoomMember[]
 }
 
 interface RoomsResponse {
   listing: Listing
-  rooms: EmoRoom[]
+  rooms: Room[]
 }
 
-interface EmoStamp {
+interface Stamp {
   uuid: string
   name: string
   summary: string
   image: string
 }
 
-interface EmoStampsResponse {
+interface StampsResponse {
   listing: Listing
-  stamps: EmoStamp[]
+  stamps: Stamp[]
 }
 
-interface EmoMotion {
+interface Motion {
   uuid: string
   name: string
   preview: string
 }
 
-interface EmoMotionsResponse {
+interface MotionsResponse {
   listing: Listing
-  motions: EmoMotion[]
+  motions: Motion[]
 }
 
-interface EmoWebhookResponse {
+interface WebhookResponse {
   description: string
   events: string[]
   status: string
@@ -75,23 +75,23 @@ interface MessagesResponse {
 interface MessageResponse {
   sequence: number
   uniqueId: string
-  user: EmoRoomMember
-  message: EmoMessage
+  user: RoomMember
+  message: Message
   media: string
   audioUrl: string
   imageUrl: string
   lang: string
 }
 
-interface EmoMessage{
+interface Message{
   ja: string
 }
 
 interface SensorsResponse {
-  sensors: EmoSensor[]
+  sensors: Sensor[]
 }
 
-interface EmoSensor {
+interface Sensor {
   uuid: string
   sensorType: string
   nickname: string
@@ -103,10 +103,10 @@ interface SensorResponse {
   sensorType: string
   uuid: string
   nickname: string
-  events: EmoRoomSensorEvent[]
+  events: RoomSensorEvent[]
 }
 
-interface EmoRoomSensorEvent {
+interface RoomSensorEvent {
   temperature: number
   humidity: number
   illuminance: number
@@ -160,9 +160,9 @@ export {
   TokenResponse,
   AccountResponse,
   RoomsResponse,
-  EmoStampsResponse,
-  EmoMotionsResponse,
-  EmoWebhookResponse,
+  StampsResponse,
+  MotionsResponse,
+  WebhookResponse,
   MessagesResponse,
   MessageResponse,
   SensorsResponse,
