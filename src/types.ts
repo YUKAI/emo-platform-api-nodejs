@@ -69,10 +69,10 @@ interface EmoWebhookResponse {
 }
 
 interface MessagesResponse {
-  messages: EmoMessageInfo[]
+  messages: MessageResponse[]
 }
 
-interface EmoMessageInfo {
+interface MessageResponse {
   sequence: number
   uniqueId: string
   user: EmoRoomMember
@@ -124,6 +124,20 @@ interface EmoSettingsResponse {
   zipCode: string
 }
 
+interface PostTextMessageRequest {
+  text: string
+}
+
+interface PostStampMessageRequest {
+  stampUuid: string
+  text?: string
+}
+
+interface PostImageMessageRequest {
+  image: Blob
+  text?: string
+}
+
 export {
   TokenResponse,
   AccountResponse,
@@ -132,7 +146,11 @@ export {
   EmoMotionsResponse,
   EmoWebhookResponse,
   MessagesResponse,
+  MessageResponse,
   SensorsResponse,
   SensorResponse,
   EmoSettingsResponse,
+  PostTextMessageRequest,
+  PostStampMessageRequest,
+  PostImageMessageRequest,
 }

@@ -11,6 +11,9 @@ import type {
   EmoStampsResponse,
   RoomsResponse,
   AccountResponse,
+  PostTextMessageRequest,
+  MessageResponse,
+  PostStampMessageRequest,
 } from './types'
 
 interface Repository {
@@ -30,6 +33,11 @@ interface Repository {
   // APIs under a room
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
   getMessages: (params: {roomUuid: string, before?: number}) => Promise<MessagesResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
+  postTextMessage: (params: {roomUuid: string, params: PostTextMessageRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
+  postStampMessage: (params: {roomUuid: string, params: PostStampMessageRequest}) => Promise<MessageResponse>
+
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
   getSensors: (params: {roomUuid: string}) => Promise<SensorsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
@@ -101,6 +109,14 @@ class EmoApiClient implements Repository {
     const params = { before }
     Object.keys(params).forEach(key => params[key] === undefined && delete (params[key]))
     return await this.axiosInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
+  }
+
+  async postTextMessage ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/text`, { params }).then(({ data }) => data)
+  }
+
+  async postStampMessage ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, { params }).then(({ data }) => data)
   }
 
   async getSensors ({ roomUuid }) {
