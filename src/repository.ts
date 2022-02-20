@@ -14,6 +14,7 @@ import type {
   PostTextMessageRequest,
   MessageResponse,
   PostStampMessageRequest,
+  PostImageMessageRequest,
 } from './types'
 
 interface Repository {
@@ -37,6 +38,10 @@ interface Repository {
   postTextMessage: (params: {roomUuid: string, params: PostTextMessageRequest}) => Promise<MessageResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
   postStampMessage: (params: {roomUuid: string, params: PostStampMessageRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
+  postImageMessage: (params: {roomUuid: string, params: PostImageMessageRequest}) => Promise<MessageResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
+  postAudioMessage: (params: {roomUuid: string, params: PostAudioMessageRequest}) => Promise<MessageResponse>
 
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
   getSensors: (params: {roomUuid: string}) => Promise<SensorsResponse>
@@ -117,6 +122,14 @@ class EmoApiClient implements Repository {
 
   async postStampMessage ({ roomUuid, params }) {
     return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, { params }).then(({ data }) => data)
+  }
+
+  async postImageMessage ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, { params, headers: { 'content-type': 'multipart/form-data' } }).then(({ data }) => data)
+  }
+
+  async postAudioMessage ({ roomUuid, params }) {
+    return await this.axiosInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, { params, headers: { 'content-type': 'multipart/form-data' } }).then(({ data }) => data)
   }
 
   async getSensors ({ roomUuid }) {

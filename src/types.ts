@@ -135,7 +135,10 @@ interface PostStampMessageRequest {
 
 interface PostImageMessageRequest {
   image: Blob
-  text?: string
+}
+
+interface PostAudioMessageRequest {
+  audio: Blob
 }
 
 export {
@@ -153,4 +156,5 @@ export {
   PostTextMessageRequest,
   PostStampMessageRequest,
   PostImageMessageRequest,
+  PostAudioMessageRequest,
 }
