@@ -1,43 +1,41 @@
 import type { AxiosInstance } from 'axios'
 import { getAxiosInstance } from './axios_client'
 import type {
-  EmoAccountInfo,
-  EmoRoomInfo,
-  EmoTokens,
-  EmoStampsInfo,
-  EmoMotionsInfo,
-  EmoWebhookInfo,
-  EmoMessagesInfo,
-  EmoSensorsInfo,
-  EmoRoomSensorInfo,
-  EmoSettingsInfo,
+  TokenResponse,
+  SensorsResponse,
+  MessagesResponse,
+  SensorResponse,
+  EmoSettingsResponse,
+  EmoWebhookResponse,
+  EmoMotionsResponse,
+  EmoStampsResponse,
+  RoomsResponse,
+  AccountResponse,
 } from './types'
 
 interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
-  getAccessToken: () => Promise<EmoTokens>
+  getAccessToken: () => Promise<TokenResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
-  getAccountInfo: () => Promise<EmoAccountInfo>
+  getAccountInfo: () => Promise<AccountResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
-  getRoomsList: (params?: {offset: number}) => Promise<EmoRoomInfo>
+  getRoomsList: (params?: {offset: number}) => Promise<RoomsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
-  getRoomsId: () => Promise<string[]>
-  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
-  getStampsList: (params?: {offset: number}) => Promise<EmoStampsInfo>
+  getStampsList: (params?: {offset: number}) => Promise<EmoStampsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
-  getMotionsList: (params?: {offset: number}) => Promise<EmoMotionsInfo>
+  getMotionsList: (params?: {offset: number}) => Promise<EmoMotionsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
-  getWebhookSetting: () => Promise<EmoWebhookInfo>
+  getWebhookSetting: () => Promise<EmoWebhookResponse>
 
   // APIs under a room
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
-  getMessages: (params: {roomUuid: string, before?: number}) => Promise<EmoMessagesInfo>
+  getMessages: (params: {roomUuid: string, before?: number}) => Promise<MessagesResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
-  getSensors: (params: {roomUuid: string}) => Promise<EmoSensorsInfo>
+  getSensors: (params: {roomUuid: string}) => Promise<SensorsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
-  getSensorValues: (params: {roomUuid: string, sensorUuid: string}) => Promise<EmoRoomSensorInfo>
+  getSensorValues: (params: {roomUuid: string, sensorUuid: string}) => Promise<SensorResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
-  getEmoSettings: (params: {roomUuid: string}) => Promise<EmoSettingsInfo>
+  getEmoSettings: (params: {roomUuid: string}) => Promise<EmoSettingsResponse>
 }
 
 interface EmoApiClientParams {
@@ -85,11 +83,6 @@ class EmoApiClient implements Repository {
 
   async getRoomsList (params = { offset: 0 }) {
     return await this.axiosInstance.get('/v1/rooms', { params }).then(({ data }) => data)
-  }
-
-  async getRoomsId () {
-    const { rooms } = await this.axiosInstance.get<EmoRoomInfo>('/v1/rooms').then(({ data }) => data)
-    return rooms.map(room => room.uuid)
   }
 
   async getStampsList (params = { offset: 0 }) {

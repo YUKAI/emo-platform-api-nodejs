@@ -1,4 +1,4 @@
-interface EmoTokens {
+interface TokenResponse {
   accessToken: string
   refreshToken: string
 }
@@ -9,7 +9,7 @@ interface Listing {
   total: number
 }
 
-interface EmoAccountInfo {
+interface AccountResponse {
   uuid: string
   name: string
   email: string
@@ -32,7 +32,7 @@ interface EmoRoom {
   room_members: EmoRoomMember[]
 }
 
-interface EmoRoomInfo {
+interface RoomsResponse {
   listing: Listing
   rooms: EmoRoom[]
 }
@@ -44,7 +44,7 @@ interface EmoStamp {
   image: string
 }
 
-interface EmoStampsInfo {
+interface EmoStampsResponse {
   listing: Listing
   stamps: EmoStamp[]
 }
@@ -55,12 +55,12 @@ interface EmoMotion {
   preview: string
 }
 
-interface EmoMotionsInfo {
+interface EmoMotionsResponse {
   listing: Listing
   motions: EmoMotion[]
 }
 
-interface EmoWebhookInfo {
+interface EmoWebhookResponse {
   description: string
   events: string[]
   status: string
@@ -68,7 +68,7 @@ interface EmoWebhookInfo {
   url: string
 }
 
-interface EmoMessagesInfo {
+interface MessagesResponse {
   messages: EmoMessageInfo[]
 }
 
@@ -87,7 +87,7 @@ interface EmoMessage{
   ja: string
 }
 
-interface EmoSensorsInfo {
+interface SensorsResponse {
   sensors: EmoSensor[]
 }
 
@@ -99,7 +99,7 @@ interface EmoSensor {
   battery: number
 }
 
-interface EmoRoomSensorInfo {
+interface SensorResponse {
   sensorType: string
   uuid: string
   nickname: string
@@ -112,7 +112,7 @@ interface EmoRoomSensorEvent {
   illuminance: number
 }
 
-interface EmoSettingsInfo {
+interface EmoSettingsResponse {
   nickname: string
   wakeword: string
   volume: number
@@ -125,14 +125,14 @@ interface EmoSettingsInfo {
 }
 
 export {
-  EmoTokens,
-  EmoAccountInfo,
-  EmoRoomInfo,
-  EmoStampsInfo,
-  EmoMotionsInfo,
-  EmoWebhookInfo,
-  EmoMessagesInfo,
-  EmoSensorsInfo,
-  EmoRoomSensorInfo,
-  EmoSettingsInfo,
+  TokenResponse,
+  AccountResponse,
+  RoomsResponse,
+  EmoStampsResponse,
+  EmoMotionsResponse,
+  EmoWebhookResponse,
+  MessagesResponse,
+  SensorsResponse,
+  SensorResponse,
+  EmoSettingsResponse,
 }
