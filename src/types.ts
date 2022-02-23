@@ -169,7 +169,7 @@ interface PostImageMessageRequest {
 }
 
 interface PostAudioMessageRequest {
-  audio: Blob
+  audio: Buffer
 }
 
 interface PostLedColorMotionRequest {

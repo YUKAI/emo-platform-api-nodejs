@@ -1,10 +1,6 @@
 import type {AxiosError} from 'axios'
 import {EmoApiClient} from './dist/index'
-import Blob from 'cross-blob'
-
-// import {fs} from 'fs';
 import * as fs from 'fs'
-import {FormData} from 'formdata-node'
 
 console.log('emo API Client dev client')
 
@@ -156,17 +152,25 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // console.error(error)
 // })
 
-// const formData = new FormData()
-// formData.append('image', fs.createReadStream('./test.jpg'))
+// fs.readFile('./assets/sample_image.jpg', (_err, image) => {
+// console.log('POST /v1/rooms/{roomUuid}/messages/image')
+// apiClient.postImageMessage(roomUuid, {
+// image,
+// })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// console.error(error)
+// })
+// })
 
-
-fs.readFile('./test.jpg', (err, image) => {
-  console.log('POST /v1/rooms/{roomUuid}/messages/image')
-  apiClient.postImageMessage(roomUuid, {
-    image,
-    // image: data,
-    // image: fs.readFileSync('./test.jpg'),
-    // image: fs.createReadStream('./test.jpg'),
+fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
+  console.log('POST /v1/rooms/{roomUuid}/messages/audio')
+  apiClient.postAudioMessage(roomUuid, {
+    audio,
   })
     .then(response => {
       console.log(response)

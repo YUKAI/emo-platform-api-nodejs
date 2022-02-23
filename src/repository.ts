@@ -1,3 +1,5 @@
+import * as FormData from 'form-data'
+import type { AxiosInstance } from 'axios'
 import { getAxiosInstance } from './axios_client'
 import type {
   TokenResponse,
@@ -22,11 +24,6 @@ import type {
   PutWebhookEventsRequest,
   PostWebhookRequest,
 } from './types'
-import * as fs from 'fs'
-import type { AxiosInstance } from 'axios'
-// import FormData from 'form-data'
-// import { FormData } from '../node_modules/formdata-node/lib/esm/FormData';
-const FormData = require('form-data')
 
 interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
@@ -60,7 +57,7 @@ interface Repository {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
   postImageMessage: (roomUuid: string, params: PostImageMessageRequest) => Promise<MessageResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
-  postAudioMessage: (params: {roomUuid: string, params: PostAudioMessageRequest}) => Promise<MessageResponse>
+  postAudioMessage: (roomUuid: string, params: PostAudioMessageRequest) => Promise<MessageResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
   postLedColorMotion: (params: {roomUuid: string, params: PostLedColorMotionRequest}) => Promise<MessageResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
@@ -100,42 +97,7 @@ class EmoApiClient implements Repository {
     multipartHeaders.authorization = `Bearer ${accessToken}`
 
     this.axiosJsonInstance.interceptors.response.use((response) => response, this.responseInterceptor)
-
-    // this.axiosJsonInstance.interceptors.response.use(
-    //   (response) => {
-    //     return response
-    //   }, async (error) => {
-    //     const originalRequest = error.config
-
-    //     if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
-    //       originalRequest._retry = true
-    //       await this.refreshTokens()
-    //       // const { accessToken } = await this.getAccessToken()
-    //       // const authorization = `Bearer ${String(accessToken)}`
-    //       // const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
-    //       // jsonHeaders.authorization = authorization
-    //       // const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
-    //       // multipartHeaders.authorization = authorization
-    //       originalRequest.headers.authorization = `Bearer ${this.accessToken}`
-    //       return await this.axiosJsonInstance(originalRequest)
-    //     }
-
-    //     return await Promise.reject(error)
-    //   })
-
     this.axiosMultipartInstance.interceptors.response.use((response) => response, this.responseInterceptor)
-    // }, async (error) => {
-    //   const originalRequest = error.config
-
-    //   if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
-    //     originalRequest._retry = true
-    //     await this.refreshTokens()
-    //     originalRequest.headers.authorization = `Bearer ${String(this.accessToken)}`
-    //     return await this.axiosJsonInstance(originalRequest)
-    //   }
-
-    //   return await Promise.reject(error)
-    // })
   }
 
   async responseInterceptor (error) {
@@ -219,33 +181,21 @@ class EmoApiClient implements Repository {
   }
 
   async postImageMessage (roomUuid, params: PostImageMessageRequest) {
-    // console.log(params.image)
-    // formData.append('image', params.image)
-    const content = await fs.readFileSync('./test.jpg')
-    // console.log(content)
-    // , function (err, content)
     const formData = new FormData()
-    // const buffer = Buffer.from(content, 'binary')
-    // formData.append('image', buffer)
     formData.append('image', params.image, {
-      filepath: './test.jpg',
+      filepath: './image.jpg',
       contentType: 'application/octet-stream',
-      // contentType: 'image/jpeg',
     })
-    // console.log(formData)
-    // console.log(formData.getHeaders())
     return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
-    // })
-    // const image = fs.createReadStream('/Users/chu/python/emo-platform-api-nodejs/test.jpg')
-    // console.log(image)
-    // console.log(formData)
-    // console.log(this.getMultipartaxiosJsonInstance())
-    // return await this.getMultipartaxiosJsonInstance().post(`/${String(roomUuid)}/messages/image`, formData).then(({ data }) => data)
-    // return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: { 'content-type': 'multipart/form-data' } }).then(({ data }) => data)
   }
 
-  async postAudioMessage ({ roomUuid, params }) {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, { data: params, headers: { 'content-type': 'multipart/form-data' } }).then(({ data }) => data)
+  async postAudioMessage (roomUuid, params: PostAudioMessageRequest) {
+    const formData = new FormData()
+    formData.append('audio', params.audio, {
+      filepath: './audio.mp3',
+      contentType: 'application/octet-stream',
+    })
+    return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
   }
 
   async postLedColorMotion ({ roomUuid, params }) {
