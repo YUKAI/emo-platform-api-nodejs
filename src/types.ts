@@ -165,7 +165,7 @@ interface PostStampMessageRequest {
 }
 
 interface PostImageMessageRequest {
-  image: Blob
+  image: any
 }
 
 interface PostAudioMessageRequest {
