@@ -1,5 +1,5 @@
 import axios from 'axios'
-import applyConverters from 'axios-case-converter'
+import applyCaseMiddleware from 'axios-case-converter'
 import { stringify } from 'qs'
 import { endpoint } from './constants'
 
@@ -23,7 +23,7 @@ const getAxiosInstance = ({ baseURL, contentType = 'application/json', convertCa
   const axiosClient = axios.create(getAxiosConfig({ contentType }))
 
   if (convertCases) {
-    applyConverters(axiosClient)
+    applyCaseMiddleware(axiosClient)
   }
 
   axiosClient.defaults.baseURL = baseURL ?? `${endpoint}`

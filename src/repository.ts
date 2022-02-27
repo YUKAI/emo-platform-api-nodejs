@@ -25,11 +25,13 @@ import type {
   PostWebhookRequest,
 } from './types'
 
-interface Repository {
+interface IEmoApiClient {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
   postTokenRefresh: () => Promise<TokenResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
   getMe: () => Promise<AccountResponse>
+  // https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
+  deleteMe: () => Promise<AccountResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
   getRooms: (params?: {offset: number}) => Promise<RoomsResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
@@ -81,7 +83,7 @@ interface EmoApiClientParams {
   baseURL?: string
 }
 
-class EmoApiClient implements Repository {
+class EmoApiClient implements IEmoApiClient {
   public axiosJsonInstance: AxiosInstance
   public axiosMultipartInstance: AxiosInstance
   private accessToken: string
@@ -142,6 +144,10 @@ class EmoApiClient implements Repository {
 
   async getMe () {
     return await this.axiosJsonInstance.get('/v1/me').then(({ data }) => data)
+  }
+
+  async deleteMe () {
+    return await this.axiosJsonInstance.delete('/v1/me').then(({ data }) => data)
   }
 
   async getRooms (params = { offset: 0 }) {
