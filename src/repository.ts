@@ -92,25 +92,34 @@ class EmoApiClient implements Repository {
     this.axiosMultipartInstance = getAxiosInstance({ baseURL, contentType: 'multipart/form-data', convertCases: false })
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
-    jsonHeaders.authorization = `Bearer ${accessToken}`
+    jsonHeaders.Authorization = `Bearer ${accessToken}`
     const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
-    multipartHeaders.authorization = `Bearer ${accessToken}`
+    multipartHeaders.Authorization = `Bearer ${accessToken}`
 
-    this.axiosJsonInstance.interceptors.response.use((response) => response, this.responseInterceptor)
-    this.axiosMultipartInstance.interceptors.response.use((response) => response, this.responseInterceptor)
-  }
+    const responseInterceptorJson = async (error) => {
+      const originalRequest = error.config
 
-  async responseInterceptor (error) {
-    const originalRequest = error.config
+      if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
+        originalRequest._retry = true
+        await this.refreshTokens()
+        originalRequest.headers.Authorization = `Bearer ${String(this.accessToken)}`
+        return await this.axiosJsonInstance.request(originalRequest)
+      }
 
-    if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/) && !originalRequest._retry) {
-      originalRequest._retry = true
-      await this.refreshTokens()
-      originalRequest.headers.authorization = `Bearer ${String(this.accessToken)}`
-      return await this.axiosJsonInstance(originalRequest)
+      return await Promise.reject(error)
     }
 
-    return await Promise.reject(error)
+    const responseInterceptorMultipart = async (error) => {
+      if (error.response?.status === 401 && error.response?.data?.reason?.match(/JWT.+expired/)) {
+        await this.refreshTokens()
+        return await Promise.reject(new Error('TOKEN_EXPIRED'))
+      }
+
+      return await Promise.reject(error)
+    }
+
+    this.axiosJsonInstance.interceptors.response.use((response) => response, responseInterceptorJson)
+    this.axiosMultipartInstance.interceptors.response.use((response) => response, responseInterceptorMultipart)
   }
 
   async refreshTokens () {
@@ -119,10 +128,10 @@ class EmoApiClient implements Repository {
     const authorization = `Bearer ${String(accessToken)}`
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
-    jsonHeaders.authorization = authorization
+    jsonHeaders.Authorization = authorization
 
     const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
-    multipartHeaders.authorization = authorization
+    multipartHeaders.Authorization = authorization
   }
 
   async getAccountInfo () {
@@ -181,21 +190,43 @@ class EmoApiClient implements Repository {
   }
 
   async postImageMessage (roomUuid, params: PostImageMessageRequest) {
-    const formData = new FormData()
-    formData.append('image', params.image, {
-      filepath: './image.jpg',
-      contentType: 'application/octet-stream',
-    })
-    return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+    const request = async () => {
+      const buffer = Buffer.alloc(params.image.length)
+      params.image.copy(buffer)
+      const formData = new FormData()
+      formData.append('image', buffer, {
+        filepath: './image.jpg',
+        contentType: 'application/octet-stream',
+      })
+      return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+    }
+
+    try {
+      return await request()
+    } catch (error) {
+      if (String(error).endsWith('TOKEN_EXPIRED')) return await request()
+      throw error
+    }
   }
 
   async postAudioMessage (roomUuid, params: PostAudioMessageRequest) {
-    const formData = new FormData()
-    formData.append('audio', params.audio, {
-      filepath: './audio.mp3',
-      contentType: 'application/octet-stream',
-    })
-    return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+    const request = async () => {
+      const buffer = Buffer.alloc(params.audio.length)
+      params.audio.copy(buffer)
+      const formData = new FormData()
+      formData.append('audio', buffer, {
+        filepath: './audio.mp3',
+        contentType: 'application/octet-stream',
+      })
+      return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+    }
+
+    try {
+      return await request()
+    } catch (error) {
+      if (String(error).endsWith('TOKEN_EXPIRED')) return await request()
+      throw error
+    }
   }
 
   async postLedColorMotion ({ roomUuid, params }) {

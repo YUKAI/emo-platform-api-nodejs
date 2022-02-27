@@ -163,7 +163,7 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // .catch((error: AxiosError) => {
 // console.error(`ステータスコード: ${error?.response?.status}`)
 // console.error(error?.response?.data)
-// console.error(error)
+// // console.error(error)
 // })
 // })
 
