@@ -1,4 +1,3 @@
-import * as FormData from 'form-data'
 import type { AxiosInstance } from 'axios'
 import { getAxiosInstance } from './axios_client'
 import type {
@@ -24,6 +23,7 @@ import type {
   PutWebhookEventsRequest,
   PostWebhookRequest,
 } from './types'
+const FormData = require('form-data')
 
 interface IEmoApiClient {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
