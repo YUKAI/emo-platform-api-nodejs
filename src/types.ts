@@ -1,3 +1,8 @@
+interface EmoTokens {
+  accessToken: string
+  refreshToken: string
+}
+
 interface EmoAccountInfo {
   uuid: string
   name: string
@@ -8,5 +13,6 @@ interface EmoAccountInfo {
 }
 
 export {
+  EmoTokens,
   EmoAccountInfo,
 }

@@ -1,1 +1,1 @@
-export { repository as EmoApiClient } from './repository'
+export { EmoApiClient } from './repository'
