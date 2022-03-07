@@ -1,2 +1,1 @@
-// export {sayHello, sayGoodbye} from './hello-world'
-export {endpoint} from './constants'
+export { repository as EmoApiClient } from './repository'
