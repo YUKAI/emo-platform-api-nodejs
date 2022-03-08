@@ -30,7 +30,9 @@ const FormData = require('form-data')
 interface IEmoApiClient {
   // https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
   postTokenRefresh: () => Promise<TokenResponse>
-  // https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
+  */
   getMe: () => Promise<AccountResponse>
   // https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
   deleteMe: () => Promise<AccountResponse>
@@ -144,46 +146,79 @@ class EmoApiClient implements IEmoApiClient {
     return await this.axiosJsonInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
+  */
   async getMe (): Promise<AccountResponse> {
     return await this.axiosJsonInstance.get('/v1/me').then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
+   */
   async deleteMe (): Promise<AccountResponse> {
     return await this.axiosJsonInstance.delete('/v1/me').then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
+   */
   async getRooms (params = { offset: 0 }): Promise<RoomsResponse> {
     return await this.axiosJsonInstance.get('/v1/rooms', { params }).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
+   */
   async getStamps (params = { offset: 0 }): Promise<StampsResponse> {
     return await this.axiosJsonInstance.get('/v1/stamps', { params }).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
+   */
   async getMotions (params = { offset: 0 }): Promise<MotionsResponse> {
     return await this.axiosJsonInstance.get('/v1/motions', { params }).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
+   */
   async getWebhook (): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.get('/v1/webhook').then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
+   */
   async postWebhook (params: PostWebhookRequest): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.post('/v1/webhook', params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
+   */
   async putWebhook (params: PutWebhookRequest): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.put('/v1/webhook', params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
+   */
   async deleteWebhook (): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.delete('/v1/webhook').then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
+   */
   async putWebhookEvents (params): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.put('/v1/webhook/events', params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
+   */
   async getMessages ({ roomUuid, before = undefined }): Promise<MessagesResponse> {
     const params = { ...before }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
@@ -191,14 +226,23 @@ class EmoApiClient implements IEmoApiClient {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
+   */
   async postTextMessage (roomUuid, params): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/text`, params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
+   */
   async postStampMessage (roomUuid, params): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
+   */
   async postImageMessage (roomUuid, params: PostImageMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.image.length)
@@ -219,6 +263,9 @@ class EmoApiClient implements IEmoApiClient {
     }
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
+   */
   async postAudioMessage (roomUuid, params: PostAudioMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.audio.length)
@@ -239,26 +286,44 @@ class EmoApiClient implements IEmoApiClient {
     }
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
+   */
   async postLedColorMotion (roomUuid, params: PostLedColorMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
+   */
   async postMoveToMotion (roomUuid, params: PostMoveToMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
+   */
   async postPresetMotion (roomUuid, params: PostPresetMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/preset`, params).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
+   */
   async getSensors ({ roomUuid }): Promise<SensorsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors`).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
+   */
   async getSensorValues ({ roomUuid, sensorUuid }): Promise<SensorResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors/${String(sensorUuid)}/values`).then(({ data }) => data)
   }
 
+  /**
+   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
+   */
   async getEmoSettings ({ roomUuid }): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/emo/settings`).then(({ data }) => data)
   }

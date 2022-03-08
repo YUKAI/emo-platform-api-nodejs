@@ -186,25 +186,10 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // console.error(error)
 // })
 
-// fs.readFile('./assets/sample_image.jpg', (_err, image) => {
-// console.log('POST /v1/rooms/{roomUuid}/messages/image')
-// apiClient.postImageMessage(roomUuid, {
-// image,
-// })
-// .then(response => {
-// console.log(response)
-// })
-// .catch((error: AxiosError) => {
-// console.error(`ステータスコード: ${error?.response?.status}`)
-// console.error(error?.response?.data)
-// // console.error(error)
-// })
-// })
-
-fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
-  console.log('POST /v1/rooms/{roomUuid}/messages/audio')
-  apiClient.postAudioMessage(roomUuid, {
-    audio,
+fs.readFile('./assets/sample_image.jpg', (_err, image) => {
+  console.log('POST /v1/rooms/{roomUuid}/messages/image')
+  apiClient.postImageMessage(roomUuid, {
+    image,
   })
     .then(response => {
       console.log(response)
@@ -212,9 +197,24 @@ fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
     .catch((error: AxiosError) => {
       console.error(`ステータスコード: ${error?.response?.status}`)
       console.error(error?.response?.data)
-      console.error(error)
+      // console.error(error)
     })
 })
+
+// fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
+// console.log('POST /v1/rooms/{roomUuid}/messages/audio')
+// apiClient.postAudioMessage(roomUuid, {
+// audio,
+// })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// console.error(error)
+// })
+// })
 
 // console.log('POST /v1/rooms/{roomUuid}/motions/led_color')
 // apiClient.postLedColorMotion(roomUuid, {
