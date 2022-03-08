@@ -81,18 +81,47 @@ interface IEmoApiClient {
   getEmoSettings: (params: {roomUuid: string}) => Promise<EmoSettingsResponse>
 }
 
+/**
+ * EmoApiClient コンストラクタの引数
+ */
 interface EmoApiClientParams {
+  /**
+   * アクセストークン
+   */
   accessToken: string
+  /**
+   * リフレッシュトークン
+   */
   refreshToken: string
+  /**
+   * BOCCO emo platform apiにアクセスするためのendpoint
+   * デフォルト: https://platform-api.bocco.me
+   */
   baseURL?: string
 }
 
 class EmoApiClient implements IEmoApiClient {
+  /**
+   * @hidden
+   */
   public axiosJsonInstance: AxiosInstance
+  /**
+   * @hidden
+   */
   public axiosMultipartInstance: AxiosInstance
+  /**
+   * @hidden
+   */
   private accessToken: string
+  /**
+   * @hidden
+   */
   public refreshToken: string
 
+  /**
+   * API呼び出しのためのクライアントインスタンスを取得します。
+   * @params EmoApiClientParams
+   */
   constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
     this.accessToken = accessToken
     this.refreshToken = refreshToken
@@ -130,6 +159,12 @@ class EmoApiClient implements IEmoApiClient {
     this.axiosMultipartInstance.interceptors.response.use((response) => response, responseInterceptorMultipart)
   }
 
+  /**
+   * アクセストークンをリフレッシュします。
+   *
+   * アクセストークンの期限が切れたら自動的にリフレッシュされるため、
+   * この処理を明示的に呼ぶ必要はありません。
+   */
   async refreshTokens () {
     const { accessToken } = await this.postTokenRefresh()
     this.accessToken = accessToken
@@ -142,11 +177,18 @@ class EmoApiClient implements IEmoApiClient {
     multipartHeaders.Authorization = authorization
   }
 
+  /**
+   * リフレッシュトークンを使ってアクセストークンを発行します。
+   *
+   * https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
+   */
   async postTokenRefresh (): Promise<TokenResponse> {
     return await this.axiosJsonInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
   }
 
   /**
+   * 自分自身のアカウント情報を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
   */
   async getMe (): Promise<AccountResponse> {
@@ -154,6 +196,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 自分自身のアカウントを削除します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
    */
   async deleteMe (): Promise<AccountResponse> {
@@ -161,6 +205,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 部屋の一覧を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
    */
   async getRooms (params = { offset: 0 }): Promise<RoomsResponse> {
@@ -168,6 +214,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 使用できるスタンプの一覧を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
    */
   async getStamps (params = { offset: 0 }): Promise<StampsResponse> {
@@ -175,6 +223,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 使用できるモーションの一覧を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
    */
   async getMotions (params = { offset: 0 }): Promise<MotionsResponse> {
@@ -182,6 +232,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 設定されている Webhook の設定情報を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
    */
   async getWebhook (): Promise<WebhookResponse> {
@@ -189,6 +241,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * Webhook の設定情報を作成します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
    */
   async postWebhook (params: PostWebhookRequest): Promise<WebhookResponse> {
@@ -196,6 +250,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * Webhook の設定情報を更新します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
    */
   async putWebhook (params: PutWebhookRequest): Promise<WebhookResponse> {
@@ -203,6 +259,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * Webhook の設定情報を削除します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
    */
   async deleteWebhook (): Promise<WebhookResponse> {
@@ -210,6 +268,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * Webhook の通知イベントを設定します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
    */
   async putWebhookEvents (params): Promise<WebhookResponse> {
@@ -217,6 +277,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * メッセージの一覧を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
    */
   async getMessages ({ roomUuid, before = undefined }): Promise<MessagesResponse> {
@@ -227,6 +289,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * テキストメッセージを作成します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
    */
   async postTextMessage (roomUuid, params): Promise<MessageResponse> {
@@ -234,6 +298,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * スタンプメッセージを作成します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
    */
   async postStampMessage (roomUuid, params): Promise<MessageResponse> {
@@ -241,6 +307,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 画像メッセージを作成します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
    */
   async postImageMessage (roomUuid, params: PostImageMessageRequest): Promise<MessageResponse> {
@@ -264,6 +332,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 音声メッセージを作成します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
    */
   async postAudioMessage (roomUuid, params: PostAudioMessageRequest): Promise<MessageResponse> {
@@ -287,6 +357,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * LEDモーションを実行します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
    */
   async postLedColorMotion (roomUuid, params: PostLedColorMotionRequest): Promise<MessageResponse> {
@@ -294,6 +366,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 首振りモーションを実行します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
    */
   async postMoveToMotion (roomUuid, params: PostMoveToMotionRequest): Promise<MessageResponse> {
@@ -301,6 +375,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * プロセットモーションを実行します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
    */
   async postPresetMotion (roomUuid, params: PostPresetMotionRequest): Promise<MessageResponse> {
@@ -308,6 +384,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * センサーの一覧を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
    */
   async getSensors ({ roomUuid }): Promise<SensorsResponse> {
@@ -315,6 +393,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * センサーの値を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
    */
   async getSensorValues ({ roomUuid, sensorUuid }): Promise<SensorResponse> {
@@ -322,6 +402,8 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * emoの設定値を取得します。
+   *
    * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
    */
   async getEmoSettings ({ roomUuid }): Promise<EmoSettingsResponse> {
@@ -330,5 +412,6 @@ class EmoApiClient implements IEmoApiClient {
 }
 
 export {
+  EmoApiClientParams,
   EmoApiClient,
 }
