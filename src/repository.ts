@@ -23,6 +23,8 @@ import type {
   PutWebhookEventsRequest,
   PostWebhookRequest,
 } from './types'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const FormData = require('form-data')
 
 interface IEmoApiClient {

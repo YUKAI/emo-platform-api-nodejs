@@ -1,0 +1,19 @@
+image: node:16.13.2
+pipelines:
+  default:
+    - step:
+        name: yarn install
+        script:
+          - yarn install
+    - step:
+        name: lint
+        script:
+          - yarn run lint:ci
+    - step:
+        name: build
+        script:
+          - yarn run build
+    - step:
+        name: test
+        script:
+          - yarn run test
