@@ -138,66 +138,66 @@ class EmoApiClient implements IEmoApiClient {
     multipartHeaders.Authorization = authorization
   }
 
-  async postTokenRefresh () {
+  async postTokenRefresh (): Promise<TokenResponse> {
     return await this.axiosJsonInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
   }
 
-  async getMe () {
+  async getMe (): Promise<AccountResponse> {
     return await this.axiosJsonInstance.get('/v1/me').then(({ data }) => data)
   }
 
-  async deleteMe () {
+  async deleteMe (): Promise<AccountResponse> {
     return await this.axiosJsonInstance.delete('/v1/me').then(({ data }) => data)
   }
 
-  async getRooms (params = { offset: 0 }) {
+  async getRooms (params = { offset: 0 }): Promise<RoomsResponse> {
     return await this.axiosJsonInstance.get('/v1/rooms', { params }).then(({ data }) => data)
   }
 
-  async getStamps (params = { offset: 0 }) {
+  async getStamps (params = { offset: 0 }): Promise<StampsResponse> {
     return await this.axiosJsonInstance.get('/v1/stamps', { params }).then(({ data }) => data)
   }
 
-  async getMotions (params = { offset: 0 }) {
+  async getMotions (params = { offset: 0 }): Promise<MotionsResponse> {
     return await this.axiosJsonInstance.get('/v1/motions', { params }).then(({ data }) => data)
   }
 
-  async getWebhook () {
+  async getWebhook (): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.get('/v1/webhook').then(({ data }) => data)
   }
 
-  async postWebhook (params: PostWebhookRequest) {
+  async postWebhook (params: PostWebhookRequest): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.post('/v1/webhook', params).then(({ data }) => data)
   }
 
-  async putWebhook (params: PutWebhookRequest) {
+  async putWebhook (params: PutWebhookRequest): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.put('/v1/webhook', params).then(({ data }) => data)
   }
 
-  async deleteWebhook () {
+  async deleteWebhook (): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.delete('/v1/webhook').then(({ data }) => data)
   }
 
-  async putWebhookEvents (params) {
+  async putWebhookEvents (params): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.put('/v1/webhook/events', params).then(({ data }) => data)
   }
 
-  async getMessages ({ roomUuid, before = undefined }) {
+  async getMessages ({ roomUuid, before = undefined }): Promise<MessagesResponse> {
     const params = { ...before }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(params).forEach(key => params[key] === undefined && delete (params[key]))
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
   }
 
-  async postTextMessage (roomUuid, params) {
+  async postTextMessage (roomUuid, params): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/text`, params).then(({ data }) => data)
   }
 
-  async postStampMessage (roomUuid, params) {
+  async postStampMessage (roomUuid, params): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, params).then(({ data }) => data)
   }
 
-  async postImageMessage (roomUuid, params: PostImageMessageRequest) {
+  async postImageMessage (roomUuid, params: PostImageMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.image.length)
       params.image.copy(buffer)
@@ -217,7 +217,7 @@ class EmoApiClient implements IEmoApiClient {
     }
   }
 
-  async postAudioMessage (roomUuid, params: PostAudioMessageRequest) {
+  async postAudioMessage (roomUuid, params: PostAudioMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.audio.length)
       params.audio.copy(buffer)
@@ -237,27 +237,27 @@ class EmoApiClient implements IEmoApiClient {
     }
   }
 
-  async postLedColorMotion (roomUuid, params: PostLedColorMotionRequest) {
+  async postLedColorMotion (roomUuid, params: PostLedColorMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, params).then(({ data }) => data)
   }
 
-  async postMoveToMotion (roomUuid, params: PostMoveToMotionRequest) {
+  async postMoveToMotion (roomUuid, params: PostMoveToMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, params).then(({ data }) => data)
   }
 
-  async postPresetMotion (roomUuid, params: PostPresetMotionRequest) {
+  async postPresetMotion (roomUuid, params: PostPresetMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/preset`, params).then(({ data }) => data)
   }
 
-  async getSensors ({ roomUuid }) {
+  async getSensors ({ roomUuid }): Promise<SensorsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors`).then(({ data }) => data)
   }
 
-  async getSensorValues ({ roomUuid, sensorUuid }) {
+  async getSensorValues ({ roomUuid, sensorUuid }): Promise<SensorResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors/${String(sensorUuid)}/values`).then(({ data }) => data)
   }
 
-  async getEmoSettings ({ roomUuid }) {
+  async getEmoSettings ({ roomUuid }): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/emo/settings`).then(({ data }) => data)
   }
 }
