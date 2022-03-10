@@ -17,6 +17,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "dev:watch": "nodemon dev.ts",
+    "doc": "typedoc src/repository.ts src/types.ts",
     "test": "jest"
   },
   "devDependencies": {

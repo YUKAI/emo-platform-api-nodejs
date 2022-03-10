@@ -48,6 +48,13 @@ Output will be under `/dist`.
 yarn build:watch
 ```
 
+
+### Update documentation
+
+```
+yarn doc
+```
+
 ### Running development script
 
 To call SDK functions, using `dev.ts` is easy.

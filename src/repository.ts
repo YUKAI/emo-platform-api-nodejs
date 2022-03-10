@@ -157,7 +157,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * リフレッシュトークンを使ってアクセストークンを発行します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/oauth/token/refresh
    * @category Authentication
    */
   async postTokenRefresh (): Promise<TokenResponse> {
@@ -167,7 +167,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 自分自身のアカウント情報を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/me
    * @category Account
   */
   async getMe (): Promise<AccountResponse> {
@@ -177,7 +177,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 自分自身のアカウントを削除します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/me
    * @category Account
    */
   async deleteMe (): Promise<AccountResponse> {
@@ -187,7 +187,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 部屋の一覧を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
    * @category Room
    */
   async getRooms (params = { offset: 0 }): Promise<RoomsResponse> {
@@ -197,7 +197,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 使用できるスタンプの一覧を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
    * @category Master data
    */
   async getStamps (params = { offset: 0 }): Promise<StampsResponse> {
@@ -207,7 +207,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 使用できるモーションの一覧を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
    * @category Master data
    */
   async getMotions (params = { offset: 0 }): Promise<MotionsResponse> {
@@ -217,7 +217,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 設定されている Webhook の設定情報を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
    * @category Webhook
    */
   async getWebhook (): Promise<WebhookResponse> {
@@ -227,7 +227,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * Webhook の設定情報を作成します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
    * @category Webhook
    */
   async postWebhook (params: PostWebhookRequest): Promise<WebhookResponse> {
@@ -237,7 +237,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * Webhook の設定情報を更新します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
    * @category Webhook
    */
   async putWebhook (params: PutWebhookRequest): Promise<WebhookResponse> {
@@ -247,7 +247,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * Webhook の設定情報を削除します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
    * @category Webhook
    */
   async deleteWebhook (): Promise<WebhookResponse> {
@@ -257,21 +257,21 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * Webhook の通知イベントを設定します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
    * @category Webhook
    */
-  async putWebhookEvents (params): Promise<WebhookResponse> {
+  async putWebhookEvents (params: PutWebhookEventsRequest): Promise<WebhookResponse> {
     return await this.axiosJsonInstance.put('/v1/webhook/events', params).then(({ data }) => data)
   }
 
   /**
    * メッセージの一覧を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
    * @category Under a room
    */
-  async getMessages ({ roomUuid, before = undefined }): Promise<MessagesResponse> {
-    const params = { ...before }
+  async getMessages ({ roomUuid, before = undefined }: {roomUuid: string, before?: number}): Promise<MessagesResponse> {
+    const params = { before }
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(params).forEach(key => params[key] === undefined && delete (params[key]))
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
@@ -280,30 +280,30 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * テキストメッセージを作成します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
    * @category Under a room
    */
-  async postTextMessage (roomUuid, params): Promise<MessageResponse> {
+  async postTextMessage (roomUuid: string, params: PostTextMessageRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/text`, params).then(({ data }) => data)
   }
 
   /**
    * スタンプメッセージを作成します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
    * @category Under a room
    */
-  async postStampMessage (roomUuid, params): Promise<MessageResponse> {
+  async postStampMessage (roomUuid: string, params: PostStampMessageRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, params).then(({ data }) => data)
   }
 
   /**
    * 画像メッセージを作成します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
    * @category Under a room
    */
-  async postImageMessage (roomUuid, params: PostImageMessageRequest): Promise<MessageResponse> {
+  async postImageMessage (roomUuid: string, params: PostImageMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.image.length)
       params.image.copy(buffer)
@@ -326,10 +326,10 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 音声メッセージを作成します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
    * @category Under a room
    */
-  async postAudioMessage (roomUuid, params: PostAudioMessageRequest): Promise<MessageResponse> {
+  async postAudioMessage (roomUuid: string, params: PostAudioMessageRequest): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.audio.length)
       params.audio.copy(buffer)
@@ -352,60 +352,60 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * LEDモーションを実行します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
    * @category Under a room
    */
-  async postLedColorMotion (roomUuid, params: PostLedColorMotionRequest): Promise<MessageResponse> {
+  async postLedColorMotion (roomUuid: string, params: PostLedColorMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, params).then(({ data }) => data)
   }
 
   /**
    * 首振りモーションを実行します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
    * @category Under a room
    */
-  async postMoveToMotion (roomUuid, params: PostMoveToMotionRequest): Promise<MessageResponse> {
+  async postMoveToMotion (roomUuid: string, params: PostMoveToMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, params).then(({ data }) => data)
   }
 
   /**
    * プロセットモーションを実行します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
    * @category Under a room
    */
-  async postPresetMotion (roomUuid, params: PostPresetMotionRequest): Promise<MessageResponse> {
+  async postPresetMotion (roomUuid: string, params: PostPresetMotionRequest): Promise<MessageResponse> {
     return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/preset`, params).then(({ data }) => data)
   }
 
   /**
    * センサーの一覧を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
    * @category Under a room
    */
-  async getSensors ({ roomUuid }): Promise<SensorsResponse> {
+  async getSensors ({ roomUuid }: {roomUuid: string}): Promise<SensorsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors`).then(({ data }) => data)
   }
 
   /**
    * センサーの値を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
    * @category Under a room
    */
-  async getSensorValues ({ roomUuid, sensorUuid }): Promise<SensorResponse> {
+  async getSensorValues ({ roomUuid, sensorUuid }: {roomUuid: string, sensorUuid: string}): Promise<SensorResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors/${String(sensorUuid)}/values`).then(({ data }) => data)
   }
 
   /**
    * emoの設定値を取得します。
    *
-   * https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
    * @category Under a room
    */
-  async getEmoSettings ({ roomUuid }): Promise<EmoSettingsResponse> {
+  async getEmoSettings ({ roomUuid }: {roomUuid: string}): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/emo/settings`).then(({ data }) => data)
   }
 }
