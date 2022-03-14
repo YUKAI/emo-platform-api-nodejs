@@ -19,7 +19,7 @@ export ACCESS_TOKEN='AAAAAA.BBBBBBBB.CCCC'
 ```
 import { AccountRepository } from 'emo-platform-api-sdk'
 
-AccountRepository.getAccountInfo().then(response => console.log(response))
+AccountRepository.getMe().then(response => console.log(response))
 ```
 Then you will see the response of `GET /v1/me`
 
