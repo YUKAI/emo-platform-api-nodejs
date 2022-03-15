@@ -33,6 +33,7 @@ apiClient.getMe()
 ```
 Then you will see the response of `GET /v1/me`
 
+Please see further documentation at `docs/index.html`
 
 ## Library development
 
@@ -63,7 +64,7 @@ yarn build:watch
 ```
 yarn doc
 ```
-Documentations will be placed under `docs/`.
+Documentation will be placed under `docs/`.
 
 ### Running development script
 
