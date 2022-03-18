@@ -17,6 +17,7 @@
     "build": "tsc",
     "build:watch": "tsc --watch",
     "dev:watch": "nodemon dev.ts",
+    "doc": "typedoc src/repository.ts src/types.ts",
     "test": "jest"
   },
   "devDependencies": {
@@ -38,6 +39,7 @@
     "nodemon": "^2.0.15",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0",
+    "typedoc": "^0.22.13",
     "typescript": "^4.5.5"
   },
   "dependencies": {
