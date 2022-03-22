@@ -70,6 +70,10 @@ interface EmoApiClientParams {
    */
   refreshToken: string
   /**
+   * X-User-Channel (法人向けAPIキー)
+   */
+  channelUser?: string
+  /**
    * BOCCO emo platform apiにアクセスするためのendpoint
    * デフォルト: https://platform-api.bocco.me
    */
@@ -93,21 +97,36 @@ class EmoApiClient implements IEmoApiClient {
    * @hidden
    */
   public refreshToken: string
+  /**
+   * @hidden
+   */
+  public channelUser: string
 
   /**
    * API呼び出しのためのクライアントインスタンスを取得します。
    * @params EmoApiClientParams
    */
-  constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
+  constructor ({ accessToken, refreshToken, channelUser, baseURL }: EmoApiClientParams) {
     this.accessToken = accessToken
     this.refreshToken = refreshToken
+    this.channelUser = channelUser
+
+    // if (accessToken === undefined && channelUser === undefined) {
+    //   throw new TypeError('Either accessToken or channelUser is required.')
+    // }
+
     this.axiosJsonInstance = getAxiosInstance({ baseURL, contentType: 'application/json', convertCases: true })
     this.axiosMultipartInstance = getAxiosInstance({ baseURL, contentType: 'multipart/form-data', convertCases: false })
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
-    jsonHeaders.Authorization = `Bearer ${accessToken}`
     const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
+    jsonHeaders.Authorization = `Bearer ${accessToken}`
     multipartHeaders.Authorization = `Bearer ${accessToken}`
+
+    if (channelUser !== undefined) {
+      jsonHeaders['X-Channel-User'] = channelUser
+      multipartHeaders['X-Channel-User'] = channelUser
+    }
 
     const responseInterceptorJson = async (error) => {
       const originalRequest = error.config

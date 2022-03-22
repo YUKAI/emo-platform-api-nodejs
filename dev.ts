@@ -7,6 +7,7 @@ console.log('emo API Client dev client')
 const apiClient = new EmoApiClient({
   accessToken: process.env.ACCESS_TOKEN,
   refreshToken: process.env.REFRESH_TOKEN,
+  channelUser: process.env.CHANNEL_USER,
   baseURL: process.env.BASE_URL ?? 'https://platform-api.bocco.me',
 })
 
@@ -31,37 +32,37 @@ const apiClient = new EmoApiClient({
 // console.log(error)
 // })
 
-// console.log('GET /v1/rooms')
-// apiClient.getRooms({offset: 0})
+console.log('GET /v1/rooms')
+apiClient.getRooms({offset: 0})
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
+
+// console.log('GET /v1/motions')
+// apiClient.getMotions()
 // .then(response => {
 // console.log(response)
 // })
 // .catch((error: AxiosError) => {
+// console.log(error)
 // console.error(`ステータスコード: ${error?.response?.status}`)
 // console.error(error?.response?.data)
 // })
 
-// console.log('GET /v1/motions')
-// apiClient.getMotions()
-//   .then(response => {
-//     console.log(response)
-//   })
-//   .catch((error: AxiosError) => {
-//     console.log(error)
-//     console.error(`ステータスコード: ${error?.response?.status}`)
-//     console.error(error?.response?.data)
-//   })
-
 // console.log('GET /v1/stamps')
 // apiClient.getStamps()
-//   .then(response => {
-//     console.log(response)
-//   })
-//   .catch((error: AxiosError) => {
-//     console.log(error)
-//     console.error(`ステータスコード: ${error?.response?.status}`)
-//     console.error(error?.response?.data)
-//   })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.log(error)
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
 
 // console.log('GET /v1/rooms')
 // apiClient.getRoomsId()
@@ -152,7 +153,7 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // apiClient.getMessages({roomUuid})
 // .then(response => {
 // console.log(response)
-// console.log(response['messages'][0])
+// // console.log(response['messages'][0])
 // })
 // .catch((error: AxiosError) => {
 // console.error(`ステータスコード: ${error?.response?.status}`)
@@ -186,20 +187,20 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // console.error(error)
 // })
 
-fs.readFile('./assets/sample_image.jpg', (_err, image) => {
-  console.log('POST /v1/rooms/{roomUuid}/messages/image')
-  apiClient.postImageMessage(roomUuid, {
-    image,
-  })
-    .then(response => {
-      console.log(response)
-    })
-    .catch((error: AxiosError) => {
-      console.error(`ステータスコード: ${error?.response?.status}`)
-      console.error(error?.response?.data)
-      // console.error(error)
-    })
-})
+// fs.readFile('./assets/sample_image.jpg', (_err, image) => {
+// console.log('POST /v1/rooms/{roomUuid}/messages/image')
+// apiClient.postImageMessage(roomUuid, {
+// image,
+// })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// // console.error(error)
+// })
+// })
 
 // fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
 // console.log('POST /v1/rooms/{roomUuid}/messages/audio')
