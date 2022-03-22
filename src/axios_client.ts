@@ -1,21 +1,35 @@
 import axios from 'axios'
-import applyConverters from 'axios-case-converter'
+import applyCaseMiddleware from 'axios-case-converter'
 import { stringify } from 'qs'
 import { endpoint } from './constants'
 
-const axiosConfig = {
-  headers: {
-    accept: 'application/json',
-    'content-type': 'application/json',
-    authorization: `Bearer ${process.env.ACCESS_TOKEN}`
-  },
-  paramsSerializer: (params: any) => stringify(params, { arrayFormat: 'brackets' })
+const getAxiosConfig = ({ contentType }: AxiosInstanceParmas) => {
+  return {
+    headers: {
+      accept: 'application/json',
+      'content-type': contentType,
+    },
+    paramsSerializer: (params: any) => stringify(params, { arrayFormat: 'brackets' })
+  }
 }
 
-const axiosClient = axios.create(axiosConfig)
-applyConverters(axiosClient)
-axiosClient.defaults.baseURL = `${endpoint}/v1`
+interface AxiosInstanceParmas {
+  baseURL?: string
+  contentType?: string
+  convertCases?: boolean
+}
+
+const getAxiosInstance = ({ baseURL, contentType = 'application/json', convertCases = true }: AxiosInstanceParmas) => {
+  const axiosClient = axios.create(getAxiosConfig({ contentType }))
+
+  if (convertCases) {
+    applyCaseMiddleware(axiosClient)
+  }
+
+  axiosClient.defaults.baseURL = baseURL ?? `${endpoint}`
+  return axiosClient
+}
 
 export {
-  axiosClient,
+  getAxiosInstance,
 }

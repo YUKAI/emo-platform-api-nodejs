@@ -1,0 +1,10 @@
+image: node:16.13.2
+pipelines:
+  default:
+    - step:
+        name: Build & Test
+        script:
+          - yarn install
+          - yarn run lint:ci
+          - yarn run build
+          - yarn run test
