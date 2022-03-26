@@ -31,30 +31,30 @@ interface IEmoApiClient {
   postTokenRefresh: () => Promise<TokenResponse>
   getMe: () => Promise<AccountResponse>
   deleteMe: () => Promise<AccountResponse>
-  getRooms: (params?: {offset: number}) => Promise<RoomsResponse>
-  getStamps: (params?: {offset: number}) => Promise<StampsResponse>
+  getRooms: (params?: {offset?: number, channelUser?: string}) => Promise<RoomsResponse>
+  getStamps: (params?: {offset: number, channelUser?: string}) => Promise<StampsResponse>
   getMotions: (params?: {offset: number}) => Promise<MotionsResponse>
-  getWebhook: () => Promise<WebhookResponse>
-  postWebhook: (params: PostWebhookRequest) => Promise<WebhookResponse>
-  putWebhook: (params: PutWebhookRequest) => Promise<WebhookResponse>
-  deleteWebhook: () => Promise<WebhookResponse>
-  putWebhookEvents: (params: PutWebhookEventsRequest) => Promise<WebhookResponse>
+  getWebhook: (params?: {channelUser?: string}) => Promise<WebhookResponse>
+  postWebhook: (params: PostWebhookRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
+  putWebhook: (params: PutWebhookRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
+  deleteWebhook: (params?: {channelUser?: string}) => Promise<WebhookResponse>
+  putWebhookEvents: (params: PutWebhookEventsRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
 
   //
   // APIs under a room
   //
-  getMessages: (params: {roomUuid: string, before?: number}) => Promise<MessagesResponse>
-  postTextMessage: (roomUuid: string, params: PostTextMessageRequest) => Promise<MessageResponse>
-  postStampMessage: (roomUuid: string, params: PostStampMessageRequest) => Promise<MessageResponse>
-  postImageMessage: (roomUuid: string, params: PostImageMessageRequest) => Promise<MessageResponse>
-  postAudioMessage: (roomUuid: string, params: PostAudioMessageRequest) => Promise<MessageResponse>
-  postLedColorMotion: (roomUuid: string, params: PostLedColorMotionRequest) => Promise<MessageResponse>
-  postMoveToMotion: (roomUuid: string, params: PostMoveToMotionRequest) => Promise<MessageResponse>
-  postPresetMotion: (roomUuid: string, params: PostPresetMotionRequest) => Promise<MessageResponse>
+  getMessages: (params: {roomUuid: string, before?: number, channelUser?: string}) => Promise<MessagesResponse>
+  postTextMessage: (roomUuid: string, params: PostTextMessageRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postStampMessage: (roomUuid: string, params: PostStampMessageRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postImageMessage: (roomUuid: string, params: PostImageMessageRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postAudioMessage: (roomUuid: string, params: PostAudioMessageRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postLedColorMotion: (roomUuid: string, params: PostLedColorMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postMoveToMotion: (roomUuid: string, params: PostMoveToMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postPresetMotion: (roomUuid: string, params: PostPresetMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
 
-  getSensors: (params: {roomUuid: string}) => Promise<SensorsResponse>
-  getSensorValues: (params: {roomUuid: string, sensorUuid: string}) => Promise<SensorResponse>
-  getEmoSettings: (params: {roomUuid: string}) => Promise<EmoSettingsResponse>
+  getSensors: (params: {roomUuid: string, channelUser?: string}) => Promise<SensorsResponse>
+  getSensorValues: (params: {roomUuid: string, sensorUuid: string, channelUser?: string}) => Promise<SensorResponse>
+  getEmoSettings: (params: {roomUuid: string, channelUser?: string}) => Promise<EmoSettingsResponse>
 }
 
 /**
@@ -69,10 +69,6 @@ interface EmoApiClientParams {
    * リフレッシュトークン
    */
   refreshToken: string
-  /**
-   * X-User-Channel (法人向けAPIキー)
-   */
-  channelUser?: string
   /**
    * BOCCO emo platform apiにアクセスするためのendpoint
    * デフォルト: https://platform-api.bocco.me
@@ -97,36 +93,22 @@ class EmoApiClient implements IEmoApiClient {
    * @hidden
    */
   public refreshToken: string
-  /**
-   * @hidden
-   */
-  public channelUser: string
 
   /**
    * API呼び出しのためのクライアントインスタンスを取得します。
    * @params EmoApiClientParams
    */
-  constructor ({ accessToken, refreshToken, channelUser, baseURL }: EmoApiClientParams) {
+  constructor ({ accessToken, refreshToken, baseURL }: EmoApiClientParams) {
     this.accessToken = accessToken
     this.refreshToken = refreshToken
-    this.channelUser = channelUser
-
-    // if (accessToken === undefined && channelUser === undefined) {
-    //   throw new TypeError('Either accessToken or channelUser is required.')
-    // }
 
     this.axiosJsonInstance = getAxiosInstance({ baseURL, contentType: 'application/json', convertCases: true })
     this.axiosMultipartInstance = getAxiosInstance({ baseURL, contentType: 'multipart/form-data', convertCases: false })
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
-    const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
     jsonHeaders.Authorization = `Bearer ${accessToken}`
+    const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
     multipartHeaders.Authorization = `Bearer ${accessToken}`
-
-    if (channelUser !== undefined) {
-      jsonHeaders['X-Channel-User'] = channelUser
-      multipartHeaders['X-Channel-User'] = channelUser
-    }
 
     const responseInterceptorJson = async (error) => {
       const originalRequest = error.config
@@ -180,7 +162,9 @@ class EmoApiClient implements IEmoApiClient {
    * @category Authentication
    */
   async postTokenRefresh (): Promise<TokenResponse> {
-    return await this.axiosJsonInstance.post('/oauth/token/refresh', { refreshToken: this.refreshToken }).then(({ data }) => data)
+    return await this.axiosJsonInstance
+      .post('/oauth/token/refresh', { refreshToken: this.refreshToken })
+      .then(({ data }) => data)
   }
 
   /**
@@ -209,8 +193,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms
    * @category Room
    */
-  async getRooms (params = { offset: 0 }): Promise<RoomsResponse> {
-    return await this.axiosJsonInstance.get('/v1/rooms', { params }).then(({ data }) => data)
+  async getRooms (params: {offset?: number, channelUser?: string} = { offset: 0, channelUser: undefined }): Promise<RoomsResponse> {
+    return await this.axiosJsonInstance
+      .get('/v1/rooms', { params: { offset: params.offset }, headers: this.channelUserHeader(params.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -219,8 +205,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/stamps
    * @category Master data
    */
-  async getStamps (params = { offset: 0 }): Promise<StampsResponse> {
-    return await this.axiosJsonInstance.get('/v1/stamps', { params }).then(({ data }) => data)
+  async getStamps (params: {offset?: number, channelUser?: string} = { offset: 0, channelUser: undefined }): Promise<StampsResponse> {
+    return await this.axiosJsonInstance
+      .get('/v1/stamps', { params: { offset: params.offset }, headers: this.channelUserHeader(params.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -239,8 +227,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/webhook
    * @category Webhook
    */
-  async getWebhook (): Promise<WebhookResponse> {
-    return await this.axiosJsonInstance.get('/v1/webhook').then(({ data }) => data)
+  async getWebhook (params?: {channelUser?: string}): Promise<WebhookResponse> {
+    return await this.axiosJsonInstance
+      .get('/v1/webhook', { headers: this.channelUserHeader(params?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -249,8 +239,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/webhook
    * @category Webhook
    */
-  async postWebhook (params: PostWebhookRequest): Promise<WebhookResponse> {
-    return await this.axiosJsonInstance.post('/v1/webhook', params).then(({ data }) => data)
+  async postWebhook (params: PostWebhookRequest, opts?: {channelUser?: string}): Promise<WebhookResponse> {
+    return await this.axiosJsonInstance
+      .post('/v1/webhook', params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -259,8 +251,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook
    * @category Webhook
    */
-  async putWebhook (params: PutWebhookRequest): Promise<WebhookResponse> {
-    return await this.axiosJsonInstance.put('/v1/webhook', params).then(({ data }) => data)
+  async putWebhook (params: PutWebhookRequest, opts?: {channelUser?: string}): Promise<WebhookResponse> {
+    return await this.axiosJsonInstance
+      .put('/v1/webhook', params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -269,8 +263,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#delete-/v1/webhook
    * @category Webhook
    */
-  async deleteWebhook (): Promise<WebhookResponse> {
-    return await this.axiosJsonInstance.delete('/v1/webhook').then(({ data }) => data)
+  async deleteWebhook (params?: {channelUser?: string}): Promise<WebhookResponse> {
+    return await this.axiosJsonInstance
+      .delete('/v1/webhook', { headers: this.channelUserHeader(params?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -279,8 +275,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
    * @category Webhook
    */
-  async putWebhookEvents (params: PutWebhookEventsRequest): Promise<WebhookResponse> {
-    return await this.axiosJsonInstance.put('/v1/webhook/events', params).then(({ data }) => data)
+  async putWebhookEvents (params: PutWebhookEventsRequest, opts?: {channelUser?: string}): Promise<WebhookResponse> {
+    return await this.axiosJsonInstance
+      .put('/v1/webhook/events', params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -289,11 +287,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
    * @category Under a room
    */
-  async getMessages ({ roomUuid, before = undefined }: {roomUuid: string, before?: number}): Promise<MessagesResponse> {
-    const params = { before }
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    Object.keys(params).forEach(key => params[key] === undefined && delete (params[key]))
-    return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/messages`, { params }).then(({ data }) => data)
+  async getMessages (params: {roomUuid: string, before?: number, channelUser?: string}): Promise<MessagesResponse> {
+    return await this.axiosJsonInstance
+      .get(`/v1/rooms/${String(params.roomUuid)}/messages`, { params: { before: params.before }, headers: this.channelUserHeader(params.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -302,8 +299,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/text
    * @category Under a room
    */
-  async postTextMessage (roomUuid: string, params: PostTextMessageRequest): Promise<MessageResponse> {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/text`, params).then(({ data }) => data)
+  async postTextMessage (roomUuid: string, params: PostTextMessageRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${String(roomUuid)}/messages/text`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -312,8 +311,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/stamp
    * @category Under a room
    */
-  async postStampMessage (roomUuid: string, params: PostStampMessageRequest): Promise<MessageResponse> {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, params).then(({ data }) => data)
+  async postStampMessage (roomUuid: string, params: PostStampMessageRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${String(roomUuid)}/messages/stamp`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -322,7 +323,7 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/image
    * @category Under a room
    */
-  async postImageMessage (roomUuid: string, params: PostImageMessageRequest): Promise<MessageResponse> {
+  async postImageMessage (roomUuid: string, params: PostImageMessageRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.image.length)
       params.image.copy(buffer)
@@ -331,7 +332,9 @@ class EmoApiClient implements IEmoApiClient {
         filepath: './image.jpg',
         contentType: 'application/octet-stream',
       })
-      return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+      return await this.axiosMultipartInstance
+        .post(`/v1/rooms/${String(roomUuid)}/messages/image`, formData, { headers: { ...this.channelUserHeader(opts?.channelUser), ...formData.getHeaders() } })
+        .then(({ data }) => data)
     }
 
     try {
@@ -348,7 +351,7 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/messages/audio
    * @category Under a room
    */
-  async postAudioMessage (roomUuid: string, params: PostAudioMessageRequest): Promise<MessageResponse> {
+  async postAudioMessage (roomUuid: string, params: PostAudioMessageRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
     const request = async () => {
       const buffer = Buffer.alloc(params.audio.length)
       params.audio.copy(buffer)
@@ -357,7 +360,9 @@ class EmoApiClient implements IEmoApiClient {
         filepath: './audio.mp3',
         contentType: 'application/octet-stream',
       })
-      return await this.axiosMultipartInstance.post(`/v1/rooms/${String(roomUuid)}/messages/audio`, formData, { headers: formData.getHeaders() }).then(({ data }) => data)
+      return await this.axiosMultipartInstance
+        .post(`/v1/rooms/${String(roomUuid)}/messages/audio`, formData, { headers: { ...this.channelUserHeader(opts?.channelUser), ...formData.getHeaders() } })
+        .then(({ data }) => data)
     }
 
     try {
@@ -374,8 +379,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/led_color
    * @category Under a room
    */
-  async postLedColorMotion (roomUuid: string, params: PostLedColorMotionRequest): Promise<MessageResponse> {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, params).then(({ data }) => data)
+  async postLedColorMotion (roomUuid: string, params: PostLedColorMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${String(roomUuid)}/motions/led_color`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -384,8 +391,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/move_to
    * @category Under a room
    */
-  async postMoveToMotion (roomUuid: string, params: PostMoveToMotionRequest): Promise<MessageResponse> {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, params).then(({ data }) => data)
+  async postMoveToMotion (roomUuid: string, params: PostMoveToMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${String(roomUuid)}/motions/move_to`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -394,8 +403,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
    * @category Under a room
    */
-  async postPresetMotion (roomUuid: string, params: PostPresetMotionRequest): Promise<MessageResponse> {
-    return await this.axiosJsonInstance.post(`/v1/rooms/${String(roomUuid)}/motions/preset`, params).then(({ data }) => data)
+  async postPresetMotion (roomUuid: string, params: PostPresetMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${String(roomUuid)}/motions/preset`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -404,8 +415,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors
    * @category Under a room
    */
-  async getSensors ({ roomUuid }: {roomUuid: string}): Promise<SensorsResponse> {
-    return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors`).then(({ data }) => data)
+  async getSensors (params: {roomUuid: string, channelUser?: string}): Promise<SensorsResponse> {
+    return await this.axiosJsonInstance
+      .get(`/v1/rooms/${String(params.roomUuid)}/sensors`, { headers: this.channelUserHeader(params.channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -414,8 +427,10 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/sensors/-sensor_id-/values
    * @category Under a room
    */
-  async getSensorValues ({ roomUuid, sensorUuid }: {roomUuid: string, sensorUuid: string}): Promise<SensorResponse> {
-    return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/sensors/${String(sensorUuid)}/values`).then(({ data }) => data)
+  async getSensorValues ({ roomUuid, sensorUuid, channelUser }: {roomUuid: string, sensorUuid: string, channelUser?: string}): Promise<SensorResponse> {
+    return await this.axiosJsonInstance
+      .get(`/v1/rooms/${String(roomUuid)}/sensors/${String(sensorUuid)}/values`, { headers: this.channelUserHeader(channelUser) })
+      .then(({ data }) => data)
   }
 
   /**
@@ -424,8 +439,16 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
    * @category Under a room
    */
-  async getEmoSettings ({ roomUuid }: {roomUuid: string}): Promise<EmoSettingsResponse> {
-    return await this.axiosJsonInstance.get(`/v1/rooms/${String(roomUuid)}/emo/settings`).then(({ data }) => data)
+  async getEmoSettings ({ roomUuid, channelUser }: {roomUuid: string, channelUser?: string}): Promise<EmoSettingsResponse> {
+    return await this.axiosJsonInstance
+      .get(`/v1/rooms/${String(roomUuid)}/emo/settings`, { headers: this.channelUserHeader(channelUser) })
+      .then(({ data }) => data)
+  }
+
+  channelUserHeader (channelUser?: string): {[key: string]: string} {
+    if (channelUser === undefined) return {}
+
+    return { 'X-Channel-User': channelUser }
   }
 }
 
