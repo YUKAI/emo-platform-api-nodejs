@@ -32,7 +32,8 @@ const apiClient = new EmoApiClient({
 // })
 
 // console.log('GET /v1/rooms')
-// apiClient.getRooms({offset: 0})
+// apiClient.getRooms({channelUser: process.env.CHANNEL_USER})
+// apiClient.getRooms()
 // .then(response => {
 // console.log(response)
 // })
@@ -43,37 +44,29 @@ const apiClient = new EmoApiClient({
 
 // console.log('GET /v1/motions')
 // apiClient.getMotions()
-//   .then(response => {
-//     console.log(response)
-//   })
-//   .catch((error: AxiosError) => {
-//     console.log(error)
-//     console.error(`ステータスコード: ${error?.response?.status}`)
-//     console.error(error?.response?.data)
-//   })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.log(error)
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
 
 // console.log('GET /v1/stamps')
+// apiClient.getStamps({channelUser: process.env.CHANNEL_USER})
 // apiClient.getStamps()
-//   .then(response => {
-//     console.log(response)
-//   })
-//   .catch((error: AxiosError) => {
-//     console.log(error)
-//     console.error(`ステータスコード: ${error?.response?.status}`)
-//     console.error(error?.response?.data)
-//   })
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.log(error)
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
 
-// console.log('GET /v1/rooms')
-// apiClient.getRoomsId()
-//   .then(roomIds => {
-//     console.log(roomIds)
-//   })
-//   .catch((error: AxiosError) => {
-//     console.error(`ステータスコード: ${error?.response?.status}`)
-//     console.error(error?.response?.data)
-//   })
-
-// console.log('GET /v1/webhook')
+console.log('GET /v1/webhook')
+// apiClient.getWebhook({channelUser: process.env.CHANNEL_USER})
 // apiClient.getWebhook()
 // .then(response => {
 // console.log(response)
@@ -88,7 +81,9 @@ const apiClient = new EmoApiClient({
 // description: 'Webhookテスト3',
 // url: 'http://a075-118-86-111-67.ngrok.io',
 // // url: 'https://ecpplus.net',
-// })
+// },
+// // {channelUser: process.env.CHANNEL_USER}
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -103,7 +98,9 @@ const apiClient = new EmoApiClient({
 // description: 'Webhookテスト2',
 // url: 'http://a075-118-86-111-67.ngrok.io',
 // // url: 'https://ecpplus.net',
-// })
+// },
+// // {channelUser: process.env.CHANNEL_USER}
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -122,6 +119,7 @@ const apiClient = new EmoApiClient({
 // }
 
 // console.log('DELETE /v1/webhook')
+// apiClient.deleteWebhook({channelUser: process.env.CHANNEL_USER})
 // apiClient.deleteWebhook()
 // .then(response => {
 // console.log(response)
@@ -135,7 +133,9 @@ const apiClient = new EmoApiClient({
 // console.log('PUT /v1/webhook/events')
 // apiClient.putWebhookEvents({
 // events: ['vui_command.detected', 'illuminance.changed'],
-// })
+// },
+// // {channelUser: process.env.CHANNEL_USER}
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -149,10 +149,11 @@ const apiClient = new EmoApiClient({
 const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 
 // console.log('GET /v1/rooms/{roomUuid}/messages')
-// apiClient.getMessages({roomUuid})
+// // apiClient.getMessages(roomUuid, {channelUser: process.env.CHANNEL_USER})
+// apiClient.getMessages(roomUuid)
 // .then(response => {
 // console.log(response)
-// console.log(response['messages'][0])
+// // console.log(response['messages'][0])
 // })
 // .catch((error: AxiosError) => {
 // console.error(`ステータスコード: ${error?.response?.status}`)
@@ -176,7 +177,9 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // apiClient.postStampMessage(roomUuid, {
 // uuid: 'b599be00-8ccb-43d4-8ebd-a25edff199a1', // 勉強
 // text: 'スタンプ送るよ',
-// })
+// },
+// // {channelUser: process.env.CHANNEL_USER}
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -186,26 +189,34 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // console.error(error)
 // })
 
-fs.readFile('./assets/sample_image.jpg', (_err, image) => {
-  console.log('POST /v1/rooms/{roomUuid}/messages/image')
-  apiClient.postImageMessage(roomUuid, {
-    image,
-  })
-    .then(response => {
-      console.log(response)
-    })
-    .catch((error: AxiosError) => {
-      console.error(`ステータスコード: ${error?.response?.status}`)
-      console.error(error?.response?.data)
-      // console.error(error)
-    })
-})
+// fs.readFile('./assets/sample_image.jpg', (_err, image) => {
+// console.log('POST /v1/rooms/{roomUuid}/messages/image')
+// apiClient.postImageMessage(roomUuid, {
+// image,
+// },
+// // {channelUser: process.env.CHANNEL_USER}
+// )
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// // console.error(error)
+// })
+// })
 
 // fs.readFile('./assets/sample_audio.mp3', (_err, audio) => {
 // console.log('POST /v1/rooms/{roomUuid}/messages/audio')
-// apiClient.postAudioMessage(roomUuid, {
+// apiClient.postAudioMessage(
+// roomUuid,
+// {
 // audio,
-// })
+// },
+// // {
+// // channelUser: process.env.CHANNEL_USER,
+// // }
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -217,11 +228,17 @@ fs.readFile('./assets/sample_image.jpg', (_err, image) => {
 // })
 
 // console.log('POST /v1/rooms/{roomUuid}/motions/led_color')
-// apiClient.postLedColorMotion(roomUuid, {
+// apiClient.postLedColorMotion(
+// roomUuid,
+// {
 // red: 100,
 // green: 50,
 // blue: 150,
-// })
+// },
+// // {
+// // channelUser: process.env.CHANNEL_USER,
+// // }
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -232,10 +249,15 @@ fs.readFile('./assets/sample_image.jpg', (_err, image) => {
 // })
 
 // console.log('POST /v1/rooms/{roomUuid}/motions/move_to')
-// apiClient.postMoveToMotion(roomUuid, {
+// apiClient.postMoveToMotion(
+// roomUuid, {
 // angle: 10,
 // verticalAngle: 5,
-// })
+// },
+// // {
+// // channelUser: process.env.CHANNEL_USER,
+// // }
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -245,12 +267,18 @@ fs.readFile('./assets/sample_image.jpg', (_err, image) => {
 // console.error(error)
 // })
 
-// const presetUuid = 'fa0beb73-ce8f-4786-9c0b-05ea5da9f125'
+const presetUuid = 'fa0beb73-ce8f-4786-9c0b-05ea5da9f125'
 
 // console.log('POST /v1/rooms/{roomUuid}/motions/preset')
-// apiClient.postPresetMotion(roomUuid, {
+// apiClient.postPresetMotion(
+// roomUuid,
+// {
 // uuid: presetUuid,
-// })
+// },
+// // {
+// // channelUser: process.env.CHANNEL_USER,
+// // }
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -262,7 +290,10 @@ fs.readFile('./assets/sample_image.jpg', (_err, image) => {
 
 
 // console.log('GET /v1/rooms/{roomUuid}/sensors')
-// apiClient.getSensors({roomUuid})
+// apiClient.getSensors(
+// roomUuid,
+// // {channelUser: process.env.CHANNEL_USER}
+// )
 // .then(response => {
 // console.log(response)
 // })
@@ -274,7 +305,8 @@ fs.readFile('./assets/sample_image.jpg', (_err, image) => {
 const sensorUuid = '63042f3c-bc7f-445d-9460-b976fa9a8116'
 
 // console.log('GET /v1/rooms/{roomUuid}/sensors/{sensorUuid}/values')
-// apiClient.getSensorValues({roomUuid, sensorUuid})
+// // apiClient.getSensorValues(roomUuid, sensorUuid, {channelUser: process.env.CHANNEL_USER})
+// apiClient.getSensorValues(roomUuid, sensorUuid)
 // .then(response => {
 // console.log(response)
 // })
@@ -283,12 +315,13 @@ const sensorUuid = '63042f3c-bc7f-445d-9460-b976fa9a8116'
 // console.error(error?.response?.data)
 // })
 
-// console.log('GET /v1/rooms/{roomUuid}/emo/setting')
-// apiClient.getEmoSettings({roomUuid})
-  // .then(response => {
-    // console.log(response)
-  // })
-  // .catch((error: AxiosError) => {
-    // console.error(`ステータスコード: ${error?.response?.status}`)
-    // console.error(error?.response?.data)
-  // })
+console.log('GET /v1/rooms/{roomUuid}/emo/setting')
+// apiClient.getEmoSettings(roomUuid, {channelUser: process.env.CHANNEL_USER})
+apiClient.getEmoSettings(roomUuid)
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
