@@ -187,6 +187,44 @@ interface PostPresetMotionRequest {
   uuid: string
 }
 
+interface HeadMotion {
+  duration: number
+  ease: number[]
+  p0: number[]
+  p1: number[]
+  p2: number[]
+  p3: number[]
+}
+
+interface AntennaPoint {
+  amp?: number
+  freq?: number
+  pos?: number
+}
+
+interface AntennaMotion {
+  duration: number
+  start: AntennaPoint
+  end: AntennaPoint
+}
+
+interface LedMotion {
+  duration: number
+  ease: number[]
+  start: number[]
+  end: number[]
+}
+
+interface PostMotionRequest {
+  head: HeadMotion[]
+  antenna: AntennaMotion[]
+  ledCheekL: LedMotion[]
+  ledCheekR: LedMotion[]
+  ledPlay: LedMotion[]
+  ledRec: LedMotion[]
+  ledFunc: LedMotion[]
+}
+
 export {
   TokenResponse,
   AccountResponse,
@@ -209,4 +247,5 @@ export {
   PostLedColorMotionRequest,
   PostMoveToMotionRequest,
   PostPresetMotionRequest,
+  PostMotionRequest,
 }

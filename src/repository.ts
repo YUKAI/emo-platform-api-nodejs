@@ -19,6 +19,7 @@ import type {
   PostLedColorMotionRequest,
   PostAudioMessageRequest,
   PostPresetMotionRequest,
+  PostMotionRequest,
   PutWebhookRequest,
   PutWebhookEventsRequest,
   PostWebhookRequest,
@@ -51,6 +52,7 @@ interface IEmoApiClient {
   postLedColorMotion: (roomUuid: string, params: PostLedColorMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
   postMoveToMotion: (roomUuid: string, params: PostMoveToMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
   postPresetMotion: (roomUuid: string, params: PostPresetMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
+  postMotion: (roomUuid: string, params: PostMotionRequest, opts?: {channelUser?: string}) => Promise<MessageResponse>
 
   getSensors: (roomUuid: string, opts?: {channelUser?: string}) => Promise<SensorsResponse>
   getSensorValues: (roomUuid: string, sensorUuid: string, opts?: {channelUser?: string}) => Promise<SensorResponse>
@@ -398,7 +400,7 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
-   * プロセットモーションを実行します。
+   * プリセットモーションを実行します。
    *
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions/preset
    * @category Under a room
@@ -406,6 +408,18 @@ class EmoApiClient implements IEmoApiClient {
   async postPresetMotion (roomUuid: string, params: PostPresetMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
     return await this.axiosJsonInstance
       .post(`/v1/rooms/${roomUuid}/motions/preset`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
+  }
+
+  /**
+   * オリジナルモーションを実行します。
+   *
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
+   * @category Under a room
+   */
+  async postMotion (roomUuid: string, params: PostMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${roomUuid}/motions`, params, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
   }
 
