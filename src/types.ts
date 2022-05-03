@@ -218,11 +218,11 @@ interface LedMotion {
 interface PostMotionRequest {
   head: HeadMotion[]
   antenna: AntennaMotion[]
-  ledCheekL: LedMotion[]
-  ledCheekR: LedMotion[]
-  ledPlay: LedMotion[]
-  ledRec: LedMotion[]
-  ledFunc: LedMotion[]
+  led_cheek_l: LedMotion[]
+  led_cheek_r: LedMotion[]
+  led_play: LedMotion[]
+  led_rec: LedMotion[]
+  led_func: LedMotion[]
 }
 
 export {

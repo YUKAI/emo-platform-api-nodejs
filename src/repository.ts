@@ -86,6 +86,10 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * @hidden
    */
+  public axiosJsonPreserveKeysInstance: AxiosInstance
+  /**
+   * @hidden
+   */
   public axiosMultipartInstance: AxiosInstance
   /**
    * @hidden
@@ -105,10 +109,13 @@ class EmoApiClient implements IEmoApiClient {
     this.refreshToken = refreshToken
 
     this.axiosJsonInstance = getAxiosInstance({ baseURL, contentType: 'application/json', convertCases: true })
+    this.axiosJsonPreserveKeysInstance = getAxiosInstance({ baseURL, contentType: 'application/json', convertCases: false })
     this.axiosMultipartInstance = getAxiosInstance({ baseURL, contentType: 'multipart/form-data', convertCases: false })
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
     jsonHeaders.Authorization = `Bearer ${accessToken}`
+    const jsonPreserveKeyHeaders: any = this.axiosJsonPreserveKeysInstance.defaults.headers
+    jsonPreserveKeyHeaders.Authorization = `Bearer ${accessToken}`
     const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
     multipartHeaders.Authorization = `Bearer ${accessToken}`
 
@@ -135,6 +142,7 @@ class EmoApiClient implements IEmoApiClient {
     }
 
     this.axiosJsonInstance.interceptors.response.use((response) => response, responseInterceptorJson)
+    this.axiosJsonPreserveKeysInstance.interceptors.response.use((response) => response, responseInterceptorJson)
     this.axiosMultipartInstance.interceptors.response.use((response) => response, responseInterceptorMultipart)
   }
 
@@ -152,6 +160,9 @@ class EmoApiClient implements IEmoApiClient {
 
     const jsonHeaders: any = this.axiosJsonInstance.defaults.headers
     jsonHeaders.Authorization = authorization
+
+    const jsonPreserveKeysHeaders: any = this.axiosJsonPreserveKeysInstance.defaults.headers
+    jsonPreserveKeysHeaders.Authorization = authorization
 
     const multipartHeaders: any = this.axiosMultipartInstance.defaults.headers
     multipartHeaders.Authorization = authorization
@@ -219,7 +230,7 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#post-/v1/rooms/-room_uuid-/motions
    * @category Master data
    */
-  async getMotions (params?: { offset?: number }): Promise<MotionsResponse> {
+  async getMotions (params?: {offset?: number}): Promise<MotionsResponse> {
     return await this.axiosJsonInstance.get('/v1/motions', { params }).then(({ data }) => data)
   }
 
@@ -418,7 +429,7 @@ class EmoApiClient implements IEmoApiClient {
    * @category Under a room
    */
   async postMotion (roomUuid: string, params: PostMotionRequest, opts?: {channelUser?: string}): Promise<MessageResponse> {
-    return await this.axiosJsonInstance
+    return await this.axiosJsonPreserveKeysInstance
       .post(`/v1/rooms/${roomUuid}/motions`, params, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
   }
@@ -453,7 +464,7 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/emo/settings
    * @category Under a room
    */
-  async getEmoSettings (roomUuid: string, opts?: { channelUser?: string}): Promise<EmoSettingsResponse> {
+  async getEmoSettings (roomUuid: string, opts?: {channelUser?: string}): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance
       .get(`/v1/rooms/${roomUuid}/emo/settings`, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)

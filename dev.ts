@@ -327,7 +327,7 @@ apiClient.postMotion(
       }
     }
   ],
-  ledCheekL: [
+  led_cheek_l: [
     {
       "duration": 1000,
       "start": [null, null, null, null],
@@ -341,7 +341,7 @@ apiClient.postMotion(
       "ease": [0, 0, 1, 1]
     }
   ],
-  ledCheekR: [
+  led_cheek_r: [
     {
       "duration": 1000,
       "start": [null, null, null, null],
@@ -355,7 +355,7 @@ apiClient.postMotion(
       "ease": [0, 0, 1, 1]
     }
   ],
-  ledPlay: [
+  led_play: [
     {
       "duration": 1000,
       "start": [null, null, null, null],
@@ -369,7 +369,7 @@ apiClient.postMotion(
       "ease": [0, 0, 1, 1]
     }
   ],
-  ledRec: [
+  led_rec: [
     {
       "duration": 1000,
       "start": [null, null, null, null],
@@ -383,7 +383,7 @@ apiClient.postMotion(
       "ease": [0, 0, 1, 1]
     }
   ],
-  ledFunc: [
+  led_func: [
     {
       "duration": 1000,
       "start": [null, null, null, null],
@@ -459,8 +459,8 @@ const sensorUuid = '63042f3c-bc7f-445d-9460-b976fa9a8116'
 // console.error(error?.response?.data)
 // })
 
-// console.log('GET /v1/rooms/{roomUuid}/emo/setting')
-// // apiClient.getEmoSettings(roomUuid, {channelUser: process.env.CHANNEL_USER})
+console.log('GET /v1/rooms/{roomUuid}/emo/settings')
+// apiClient.getEmoSettings(roomUuid, {channelUser: process.env.CHANNEL_USER})
 // apiClient.getEmoSettings(roomUuid)
   // .then(response => {
     // console.log(response)
