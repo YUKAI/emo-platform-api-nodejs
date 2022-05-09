@@ -19,7 +19,6 @@ import type {
   PostLedColorMotionRequest,
   PostAudioMessageRequest,
   PostPresetMotionRequest,
-  PostMotionRequest,
   PutWebhookRequest,
   PutWebhookEventsRequest,
   PostWebhookRequest,
