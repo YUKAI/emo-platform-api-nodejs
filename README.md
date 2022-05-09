@@ -21,6 +21,7 @@ const apiClient = new EmoApiClient({
   refreshToken: 'YOUR REFRESH TOKEN',
 })
 
+// Get my account information
 apiClient.getMe()
   .then(response => {
     console.log(response)
@@ -29,6 +30,44 @@ apiClient.getMe()
     console.error(`Status code: ${error?.response?.status}`)
     console.error(error?.response?.data)
     console.log(error)
+  })
+
+// Get my rooms
+apiClient.getRooms()
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`Status code: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+  })
+
+// response example
+{
+  listing: { offset: 0, limit: 50, total: 1 },
+  rooms: [
+    {
+      uuid: 'bcbcbcbc-1234-5678-abcd-aaaaaaaaaaaa',
+      name: 'My first room',
+      roomType: 'normal',
+      roomMembers: [Array]
+    }
+  ]
+}
+
+// Post a message
+// You can obtain uuids of rooms from `getRooms` API.
+const roomUuid = 'bcbcbcbc-1234-5678-abcd-aaaaaaaaaaaa'
+apiClient
+  .postTextMessage(roomUuid, {
+    text: 'Hello, BOCCO!',
+  })
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`Status code: ${error?.response?.status}`)
+    console.error(error?.response?.data)
   })
 ```
 Then you will see the response of `GET /v1/me`
