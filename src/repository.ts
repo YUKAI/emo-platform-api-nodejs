@@ -22,6 +22,12 @@ import type {
   PutWebhookRequest,
   PutWebhookEventsRequest,
   PostWebhookRequest,
+  PostConversationResponse,
+  PostConversationRecordingResponse,
+  PostConversationTextRequest,
+  PostConversationTextResponse,
+  PutConversationEndpointRequest,
+  PostConversationRecordingRequest,
 } from './types'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -39,6 +45,7 @@ interface IEmoApiClient {
   putWebhook: (params: PutWebhookRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
   deleteWebhook: (opts?: {channelUser?: string}) => Promise<WebhookResponse>
   putWebhookEvents: (params: PutWebhookEventsRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
+  postConversationEndpoint: (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}) => Promise<void>
 
   //
   // APIs under a room
@@ -55,6 +62,11 @@ interface IEmoApiClient {
   getSensors: (roomUuid: string, opts?: {channelUser?: string}) => Promise<SensorsResponse>
   getSensorValues: (roomUuid: string, sensorUuid: string, opts?: {channelUser?: string}) => Promise<SensorResponse>
   getEmoSettings: (roomUuid: string, opts?: {channelUser?: string}) => Promise<EmoSettingsResponse>
+
+  postConversations: (roomUuid: string, opts?: {channelUser?: string}) => Promise<PostConversationResponse>
+  postConversationsRecording: (roomUuid: string, sessionId: string, params: PostConversationRecordingRequest, opts?: {channelUser?: string}) => Promise<PostConversationRecordingResponse>
+  postConversationsText: (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: {channelUser?: string}) => Promise<PostConversationTextResponse>
+
 }
 
 /**
@@ -282,6 +294,18 @@ class EmoApiClient implements IEmoApiClient {
   }
 
   /**
+   * 対話セッションを通して、BOCCO emoからの応答を受信するためのコールバックURLを設定します。
+   *
+   * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
+   * @category Webhook
+   */
+  async postConversationEndpoint (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}): Promise<void> {
+    return await this.axiosJsonInstance
+      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then()
+  }
+
+  /**
    * メッセージの一覧を取得します。
    *
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#get-/v1/rooms/-room_uuid-/messages
@@ -441,7 +465,55 @@ class EmoApiClient implements IEmoApiClient {
    */
   async getEmoSettings (roomUuid: string, opts?: { channelUser?: string}): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance
-      .get(`/v1/rooms/${roomUuid}/emo/settings`, { headers: this.channelUserHeader(opts?.channelUser) })
+      .post(`/v1/rooms/${roomUuid}/emo/settings`, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
+  }
+
+  /**
+   * 対話セッションを作成します。
+   *
+   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations
+   * @category Under a room
+   */
+  async postConversations (roomUuid: string, opts?: { channelUser?: string }): Promise<PostConversationResponse> {
+    return await this.axiosJsonInstance
+      .get(`/v1/rooms/${roomUuid}/conversations`, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
+  }
+
+  /**
+   * 対話セッション内での音声録音要求を行います。
+   *
+   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/recording
+   * @category Under a room
+   */
+  async postConversationsRecording (roomUuid: string, sessionId: string, params: PostConversationRecordingRequest, opts?: { channelUser?: string }): Promise<PostConversationRecordingResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${roomUuid}/conversations/${sessionId}/recording`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
+  }
+
+  /**
+   * 対話セッション内でのテキストメッセージ投稿を行います。
+   *
+   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/text
+   * @category Under a room
+   */
+  async postConversationsText (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: { channelUser?: string }): Promise<PostConversationTextResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${roomUuid}/conversations/${sessionId}/text`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .then(({ data }) => data)
+  }
+
+  /**
+   * 対話セッション内でのテキストメッセージ投稿を行います。
+   *
+   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/text
+   * @category Under a room
+   */
+  async putCon (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: { channelUser?: string }): Promise<PostConversationTextResponse> {
+    return await this.axiosJsonInstance
+      .post(`/v1/rooms/${roomUuid}/conversations/${sessionId}/text`, params, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
   }
 
