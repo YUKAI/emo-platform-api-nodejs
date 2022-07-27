@@ -33,7 +33,7 @@ const apiClient = new EmoApiClient({
 
 // console.log('GET /v1/rooms')
 // apiClient.getRooms({channelUser: process.env.CHANNEL_USER})
-// apiClient.getRooms()
+// // apiClient.getRooms()
 // .then(response => {
 // console.log(response)
 // })
@@ -65,7 +65,7 @@ const apiClient = new EmoApiClient({
 // console.error(error?.response?.data)
 // })
 
-console.log('GET /v1/webhook')
+// console.log('GET /v1/webhook')
 // apiClient.getWebhook({channelUser: process.env.CHANNEL_USER})
 // apiClient.getWebhook()
 // .then(response => {
@@ -292,7 +292,7 @@ const presetUuid = 'fa0beb73-ce8f-4786-9c0b-05ea5da9f125'
 // console.log('GET /v1/rooms/{roomUuid}/sensors')
 // apiClient.getSensors(
 // roomUuid,
-// // {channelUser: process.env.CHANNEL_USER}
+// {channelUser: process.env.CHANNEL_USER}
 // )
 // .then(response => {
 // console.log(response)
@@ -315,9 +315,53 @@ const sensorUuid = '63042f3c-bc7f-445d-9460-b976fa9a8116'
 // console.error(error?.response?.data)
 // })
 
-console.log('GET /v1/rooms/{roomUuid}/emo/setting')
+// console.log('GET /v1/rooms/{roomUuid}/emo/setting', roomUuid,)
 // apiClient.getEmoSettings(roomUuid, {channelUser: process.env.CHANNEL_USER})
-apiClient.getEmoSettings(roomUuid)
+// // apiClient.getEmoSettings(roomUuid)
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
+
+// console.log('POST /v1/rooms/{roomUuid}/conversations')
+// apiClient.postConversations(roomUuid, {channelUser: process.env.CHANNEL_USER})
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
+
+const sessionId = 'de9ba52b-7a20-4c94-adae-f7a0fee8bba4'
+
+// console.log('POST /v1/rooms/{roomUuid}/conversations/{sessionId}/recording')
+// apiClient.postConversationsRecording(roomUuid, sessionId, {speechToText: true}, {channelUser: process.env.CHANNEL_USER})
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
+
+// console.log('POST /v1/rooms/{roomUuid}/conversations/{sessionId}/text')
+// apiClient.postConversationsText(roomUuid, sessionId, {display: false, text: '対話セッション内のテキストです'}, {channelUser: process.env.CHANNEL_USER})
+// .then(response => {
+// console.log(response)
+// })
+// .catch((error: AxiosError) => {
+// console.error(`ステータスコード: ${error?.response?.status}`)
+// console.error(error?.response?.data)
+// })
+
+const serviceUuid = '4c72bc4e-84b0-45cb-88e6-34d3c576e739'
+
+console.log('PUT /v1/bocco_channel/services/{service_uuid}/conversation_endpoint')
+apiClient.putConversationEndpoint(serviceUuid, {event: 'dialogue.started', 'dialogue.started': {roomUuid, channelCode: 'test', sessionId}}, {channelUser: process.env.CHANNEL_USER})
   .then(response => {
     console.log(response)
   })

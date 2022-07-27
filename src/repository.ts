@@ -45,7 +45,7 @@ interface IEmoApiClient {
   putWebhook: (params: PutWebhookRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
   deleteWebhook: (opts?: {channelUser?: string}) => Promise<WebhookResponse>
   putWebhookEvents: (params: PutWebhookEventsRequest, opts?: {channelUser?: string}) => Promise<WebhookResponse>
-  postConversationEndpoint: (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}) => Promise<void>
+  putConversationEndpoint: (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}) => Promise<void>
 
   //
   // APIs under a room
@@ -299,9 +299,9 @@ class EmoApiClient implements IEmoApiClient {
    * 詳細仕様: https://platform-api.bocco.me/dashboard/api-docs#put-/v1/webhook/events
    * @category Webhook
    */
-  async postConversationEndpoint (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}): Promise<void> {
+  async putConversationEndpoint (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}): Promise<void> {
     return await this.axiosJsonInstance
-      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, params, { headers: this.channelUserHeader(opts?.channelUser) })
+      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, params, { headers: { ...this.channelUserHeader(opts?.channelUser), 'X-Platform-API-Target': serviceUuid } })
       .then()
   }
 
@@ -465,7 +465,7 @@ class EmoApiClient implements IEmoApiClient {
    */
   async getEmoSettings (roomUuid: string, opts?: { channelUser?: string}): Promise<EmoSettingsResponse> {
     return await this.axiosJsonInstance
-      .post(`/v1/rooms/${roomUuid}/emo/settings`, { headers: this.channelUserHeader(opts?.channelUser) })
+      .get(`/v1/rooms/${roomUuid}/emo/settings`, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
   }
 
@@ -477,7 +477,7 @@ class EmoApiClient implements IEmoApiClient {
    */
   async postConversations (roomUuid: string, opts?: { channelUser?: string }): Promise<PostConversationResponse> {
     return await this.axiosJsonInstance
-      .get(`/v1/rooms/${roomUuid}/conversations`, { headers: this.channelUserHeader(opts?.channelUser) })
+      .post(`/v1/rooms/${roomUuid}/conversations`, null, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
   }
 
@@ -500,18 +500,6 @@ class EmoApiClient implements IEmoApiClient {
    * @category Under a room
    */
   async postConversationsText (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: { channelUser?: string }): Promise<PostConversationTextResponse> {
-    return await this.axiosJsonInstance
-      .post(`/v1/rooms/${roomUuid}/conversations/${sessionId}/text`, params, { headers: this.channelUserHeader(opts?.channelUser) })
-      .then(({ data }) => data)
-  }
-
-  /**
-   * 対話セッション内でのテキストメッセージ投稿を行います。
-   *
-   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/text
-   * @category Under a room
-   */
-  async putCon (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: { channelUser?: string }): Promise<PostConversationTextResponse> {
     return await this.axiosJsonInstance
       .post(`/v1/rooms/${roomUuid}/conversations/${sessionId}/text`, params, { headers: this.channelUserHeader(opts?.channelUser) })
       .then(({ data }) => data)
