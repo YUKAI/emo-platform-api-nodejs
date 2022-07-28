@@ -300,8 +300,11 @@ class EmoApiClient implements IEmoApiClient {
    * @category Webhook
    */
   async putConversationEndpoint (serviceUuid: string, params: PutConversationEndpointRequest, opts?: {channelUser?: string}): Promise<void> {
-    return await this.axiosJsonInstance
-      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, params, { headers: { ...this.channelUserHeader(opts?.channelUser), 'X-Platform-API-Target': serviceUuid } })
+    const formData = new FormData()
+    formData.append('endpoint', params.endpoint)
+
+    return await this.axiosMultipartInstance
+      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, formData, { headers: this.channelUserHeader(opts?.channelUser) })
       .then()
   }
 
@@ -472,7 +475,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 対話セッションを作成します。
    *
-   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations
+   * 詳細仕様: https://platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations
    * @category Under a room
    */
   async postConversations (roomUuid: string, opts?: { channelUser?: string }): Promise<PostConversationResponse> {
@@ -484,7 +487,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 対話セッション内での音声録音要求を行います。
    *
-   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/recording
+   * 詳細仕様: https://platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/recording
    * @category Under a room
    */
   async postConversationsRecording (roomUuid: string, sessionId: string, params: PostConversationRecordingRequest, opts?: { channelUser?: string }): Promise<PostConversationRecordingResponse> {
@@ -496,7 +499,7 @@ class EmoApiClient implements IEmoApiClient {
   /**
    * 対話セッション内でのテキストメッセージ投稿を行います。
    *
-   * 詳細仕様: https://staging-platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/text
+   * 詳細仕様: https://platform-api.bocco.me/api-docs/#post-/v1/rooms/-room_uuid-/conversations/-session_id-/text
    * @category Under a room
    */
   async postConversationsText (roomUuid: string, sessionId: string, params: PostConversationTextRequest, opts?: { channelUser?: string }): Promise<PostConversationTextResponse> {

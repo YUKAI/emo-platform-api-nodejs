@@ -209,29 +209,7 @@ interface PostConversationTextResponse {
 }
 
 interface PutConversationEndpointRequest {
-  event: 'dialogue.started' | 'dialogue.finished' | 'dialogue.received' | 'dialogue.triggered'
-  'dialogue.started'?: {
-    roomUuid: string
-    channelCode: string
-    sessionId: string
-  }
-  'dialogue.received'?: {
-    roomUuid: string
-    channelCode: string
-    sessionid: string
-    attachment: {
-      audioFile: string
-      message: string
-    }
-  }
-  'dialogue.triggered'?: {
-    roomUuid: string
-    channelCode: string
-  }
-  'dialogue.finished'?: {
-    roomUuid: string
-    channelCode: string
-  }
+  endpoint: string
 }
 
 export {

@@ -25,7 +25,6 @@ const getAxiosInstance = ({ baseURL, contentType = 'application/json', convertCa
   if (convertCases) {
     applyCaseMiddleware(axiosClient)
   }
-
   axiosClient.defaults.baseURL = baseURL ?? `${endpoint}`
   return axiosClient
 }

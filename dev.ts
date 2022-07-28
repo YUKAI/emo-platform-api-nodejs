@@ -361,7 +361,8 @@ const sessionId = 'de9ba52b-7a20-4c94-adae-f7a0fee8bba4'
 const serviceUuid = '4c72bc4e-84b0-45cb-88e6-34d3c576e739'
 
 console.log('PUT /v1/bocco_channel/services/{service_uuid}/conversation_endpoint')
-apiClient.putConversationEndpoint(serviceUuid, {event: 'dialogue.started', 'dialogue.started': {roomUuid, channelCode: 'test', sessionId}}, {channelUser: process.env.CHANNEL_USER})
+// apiClient.putConversationEndpoint(serviceUuid, {event: 'dialogue.started', 'dialogue.started': {roomUuid, channelCode: 'test', sessionId}}, {channelUser: process.env.CHANNEL_USER})
+apiClient.putConversationEndpoint(serviceUuid, {endpoint: 'https://example.com/webhook'}, {channelUser: process.env.CHANNEL_USER})
   .then(response => {
     console.log(response)
   })
