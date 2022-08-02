@@ -144,7 +144,14 @@ class EmoApiClient implements IEmoApiClient {
       return await Promise.reject(error)
     }
 
+    const requestInterceptorMultipart = async (config) => {
+      await this.refreshTokens()
+      config.headers.Authorization = `Bearer ${String(this.accessToken)}`
+      return config
+    }
+
     this.axiosJsonInstance.interceptors.response.use((response) => response, responseInterceptorJson)
+    this.axiosMultipartInstance.interceptors.request.use(requestInterceptorMultipart, (error) => error)
     this.axiosMultipartInstance.interceptors.response.use((response) => response, responseInterceptorMultipart)
   }
 
@@ -304,7 +311,13 @@ class EmoApiClient implements IEmoApiClient {
     formData.append('endpoint', params.endpoint)
 
     return await this.axiosMultipartInstance
-      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, formData, { headers: this.channelUserHeader(opts?.channelUser) })
+      .put(`/v1/bocco_channel/services/${serviceUuid}/conversation_endpoint`, formData, {
+        headers: {
+          accept: 'multipart/form-data',
+          ...this.channelUserHeader(opts?.channelUser),
+          ...formData.getHeaders()
+        }
+      })
       .then()
   }
 
