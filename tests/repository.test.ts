@@ -84,7 +84,7 @@ describe('token refreshing', () => {
   })
   
   describe('Multipart client', () => {
-    test('doesn\'t refresh token if access token is still valid', async () => {
+    test('refresh token before requesting', async () => {
       const client = new EmoApiClient({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
@@ -119,7 +119,7 @@ describe('token refreshing', () => {
       const image = await fs.readFile('./assets/sample_image.jpg')
       await client.postImageMessage(roomUuid, {image})
 
-      expect(refreshTokens.mock.calls.length).toBe(0)
+      expect(refreshTokens.mock.calls.length).toBe(1)
       scope.done()
     })
 
