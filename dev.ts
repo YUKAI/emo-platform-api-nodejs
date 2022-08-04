@@ -267,6 +267,150 @@ const roomUuid = '34c6ceab-0292-4087-8384-2537834bcf22'
 // console.error(error)
 // })
 
+console.log('POST /v1/rooms/{roomUuid}/motions')
+apiClient.postMotion(
+  roomUuid, {
+  head: [
+    {
+      "duration": 1000,
+      "p0": [null, null],
+      "p1": [null, null],
+      "p2": [-40, -20],
+      "p3": [-40, -20],
+      "ease": [0, 0, 1, 1]
+
+    },
+    {
+      "duration": 2000,
+      "p0": [null, null],
+      "p1": [0, 20],
+      "p2": [0, -20],
+      "p3": [40, 20],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "p0": [null, null],
+      "p1": [null, null],
+      "p2": [0, 0],
+      "p3": [0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+  antenna: [
+    {
+      "duration": 1000,
+      "start":
+      {
+        "amp": 1,
+        "freq": 8,
+        "pos": null
+      },
+      "end":
+      {
+        "amp": 1,
+        "freq": 8,
+        "pos": null
+      }
+    },
+    {
+      "duration": 1000,
+      "start": {
+        "amp": 0.5,
+        "freq": 8,
+        "pos": null
+      },
+      "end": {
+        "amp": 0.5,
+        "freq": 8,
+        "pos": null
+      }
+    }
+  ],
+  led_cheek_l: [
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 255, 0, 255],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 0, 0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+  led_cheek_r: [
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 255, 0, 255],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 0, 0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+  led_play: [
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 255, 0, 255],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 0, 0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+  led_rec: [
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 255, 0, 255],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 0, 0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+  led_func: [
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 255, 0, 255],
+      "ease": [0, 0, 1, 1]
+    },
+    {
+      "duration": 1000,
+      "start": [null, null, null, null],
+      "end": [0, 0, 0, 0],
+      "ease": [0, 0, 1, 1]
+    }
+  ],
+},
+  // {
+  // channelUser: process.env.CHANNEL_USER,
+  // }
+)
+  .then(response => {
+    console.log(response)
+  })
+  .catch((error: AxiosError) => {
+    console.error(`ステータスコード: ${error?.response?.status}`)
+    console.error(error?.response?.data)
+    console.error(error)
+  })
+
 const presetUuid = 'fa0beb73-ce8f-4786-9c0b-05ea5da9f125'
 
 // console.log('POST /v1/rooms/{roomUuid}/motions/preset')
@@ -315,13 +459,13 @@ const sensorUuid = '63042f3c-bc7f-445d-9460-b976fa9a8116'
 // console.error(error?.response?.data)
 // })
 
-console.log('GET /v1/rooms/{roomUuid}/emo/setting')
+console.log('GET /v1/rooms/{roomUuid}/emo/settings')
 // apiClient.getEmoSettings(roomUuid, {channelUser: process.env.CHANNEL_USER})
-apiClient.getEmoSettings(roomUuid)
-  .then(response => {
-    console.log(response)
-  })
-  .catch((error: AxiosError) => {
-    console.error(`ステータスコード: ${error?.response?.status}`)
-    console.error(error?.response?.data)
-  })
+// apiClient.getEmoSettings(roomUuid)
+  // .then(response => {
+    // console.log(response)
+  // })
+  // .catch((error: AxiosError) => {
+    // console.error(`ステータスコード: ${error?.response?.status}`)
+    // console.error(error?.response?.data)
+  // })
