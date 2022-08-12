@@ -33,7 +33,7 @@ const apiClient = new EmoApiClient({
 
 // console.log('GET /v1/rooms')
 // apiClient.getRooms({channelUser: process.env.CHANNEL_USER})
-// apiClient.getRooms()
+// // apiClient.getRooms()
 // .then(response => {
 // console.log(response)
 // })
@@ -65,7 +65,7 @@ const apiClient = new EmoApiClient({
 // console.error(error?.response?.data)
 // })
 
-console.log('GET /v1/webhook')
+// console.log('GET /v1/webhook')
 // apiClient.getWebhook({channelUser: process.env.CHANNEL_USER})
 // apiClient.getWebhook()
 // .then(response => {
@@ -436,7 +436,7 @@ const presetUuid = 'fa0beb73-ce8f-4786-9c0b-05ea5da9f125'
 // console.log('GET /v1/rooms/{roomUuid}/sensors')
 // apiClient.getSensors(
 // roomUuid,
-// // {channelUser: process.env.CHANNEL_USER}
+// {channelUser: process.env.CHANNEL_USER}
 // )
 // .then(response => {
 // console.log(response)

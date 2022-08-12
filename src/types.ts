@@ -187,6 +187,31 @@ interface PostPresetMotionRequest {
   uuid: string
 }
 
+interface PostConversationResponse {
+  sessionId: string
+}
+
+interface PostConversationRecordingRequest {
+  speechToText: boolean
+}
+
+interface PostConversationRecordingResponse {
+  sessionId: string
+}
+
+interface PostConversationTextRequest {
+  display: boolean
+  text: string
+}
+
+interface PostConversationTextResponse {
+  sessionId: string
+}
+
+interface PutConversationEndpointRequest {
+  endpoint: string
+}
+
 export {
   TokenResponse,
   AccountResponse,
@@ -209,4 +234,10 @@ export {
   PostLedColorMotionRequest,
   PostMoveToMotionRequest,
   PostPresetMotionRequest,
+  PostConversationResponse,
+  PostConversationRecordingRequest,
+  PostConversationRecordingResponse,
+  PostConversationTextRequest,
+  PostConversationTextResponse,
+  PutConversationEndpointRequest,
 }
