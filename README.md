@@ -12,7 +12,7 @@ You can get your access token at [the dashboard](https://platform-api.bocco.me/d
 
 ```ts
 import type { AxiosError } from 'axios'
-import { EmoApiClient } from 'emo-platform-api-sdk'
+import { EmoApiClient } from '@ux-xu/emo-platform-api-nodejs'
 
 const apiClient = new EmoApiClient({
   accessToken: 'YOUR ACCESS TOKEN',
