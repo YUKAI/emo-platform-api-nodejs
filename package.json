@@ -1,9 +1,14 @@
 {
-  "name": "emo-platform-api-nodejs",
+  "name": "@ux-xu/emo-platform-api-nodejs",
   "version": "1.0.0",
   "description": "emo Platform API client library for node.js",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "url": "https://github.com/YUKAI/emo-platform-api-nodejs"
+  },
+  "homepage": "https://platform-api.bocco.me",
+  "license": "MIT",
   "files": [
     "/dist"
   ],
@@ -47,9 +52,5 @@
     "axios-case-converter": "^0.9.0",
     "form-data": "^4.0.0",
     "qs": "^6.10.3"
-  },
-  "publishConfig": {
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com/"
   }
 }

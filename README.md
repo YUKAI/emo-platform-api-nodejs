@@ -1,10 +1,8 @@
-# BOCCO emo platform api node.js sdk (beta version)
+# BOCCO emo platform api client for node.js 
 
 ## Installation
-
-TODO: publish
 ```
-npm i emo-platform-api-sdk
+npm i emo-platform-api-nodejs
 ```
 
 ## Usage
